@@ -1,0 +1,24 @@
+import pytest
+from cmsapp.__init__ import create_app
+import firebase_admin
+
+JWT_TOKEN = "eyJhbGciOiJSUzI1NiIsImtpZCI6ImQ2YzM5Mzc4YWVmYzA2YzQyYTJlODI1OTA0ZWNlZDMwODg2YTk5MjIiLCJ0eXAiOiJKV1QifQ.eyJuYW1lIjoiUGhpbGlwIEJpemltaXMiLCJwaWN0dXJlIjoiaHR0cHM6Ly9saDQuZ29vZ2xldXNlcmNvbnRlbnQuY29tLy0tX2xZd2htc25Kay9BQUFBQUFBQUFBSS9BQUFBQUFBQUFBQS9BQ0hpM3Jmek1PSU1VTHJoZWE4UXRnRDBybEZhUVhleXBBL3Bob3RvLmpwZyIsImlzcyI6Imh0dHBzOi8vc2VjdXJldG9rZW4uZ29vZ2xlLmNvbS9jbG91ZC1jbXMtcCIsImF1ZCI6ImNsb3VkLWNtcy1wIiwiYXV0aF90aW1lIjoxNTcxMDgyNTE2LCJ1c2VyX2lkIjoiMlNIZjkybFZWUlhkbXo3bmJxTW5RbkduaWU4MiIsInN1YiI6IjJTSGY5MmxWVlJYZG16N25icU1uUW5HbmllODIiLCJpYXQiOjE1NzEwODI1MTcsImV4cCI6MTU3MTA4NjExNywiZW1haWwiOiJiaXppbWlzcGhpbGlwQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJmaXJlYmFzZSI6eyJpZGVudGl0aWVzIjp7Imdvb2dsZS5jb20iOlsiMTE0Nzc4MjAwODkxMzM0NDE5NTkxIl0sImVtYWlsIjpbImJpemltaXNwaGlsaXBAZ21haWwuY29tIl19LCJzaWduX2luX3Byb3ZpZGVyIjoiZ29vZ2xlLmNvbSJ9fQ.sZCICQgxQEV3nobTfeIzGKMWb_hv51OQm0FyA2-MNx1C212FdNBX81_gR0ZcUxUgCWNSzMLo1s3-XI1vz9TaAIsUW9iMDnxSZBTpJYsVokd3XinURNijX_ro-R1JRiotTIuwOpAkT24FEp5wFsS_CrflAszUAPkREwRE5WZIfRYkZdZu46IT3y1ElXAGB7mA6kPpq_eJTPY39MunJGlyC_dp0NesMHJ8tgRbu0byeqnsJtg8xdgZuihx4y-3DxVUKonlDRpgYpJz9cKhYiIc296XzmzYNnql95_PtUIJSL7ZjrIO9MiVq4whIw3L5UiWH36BgjzC9HVMqdaWujHd6w"
+
+@pytest.fixture
+def app():
+    app = create_app({
+        "TESTING": True,
+    })
+    yield app
+
+@pytest.fixture
+def client(app):
+    return app.test_client()
+
+#def test_process_token():
+#    functions.firebase_app_init()
+#    assert functions.process_token(JWT_TOKEN) == "bizimisphilip@gmail.com"
+
+def test_config():
+    assert not create_app().testing
+    assert create_app({"TESTING": True}).testing
