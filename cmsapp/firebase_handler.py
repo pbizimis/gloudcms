@@ -9,9 +9,13 @@ class FirebaseTokenVerifier():
     def verify(token):
         return auth.verify_id_token(token)
 
-def process_token(verify_token):
+class FlaskRequests():
+    def get_json():
+        return request.get_json()
+
+def process_token(get_json, verify_token):
     #receive JWT token
-    token = request.get_json()
+    token = get_json()
     #decode it
     decoded_token = verify_token(token)
     #filter email of user
@@ -24,7 +28,5 @@ def firebase_app_init():
     cred = credentials.Certificate(CREDENTIALS)
     firebase_admin.initialize_app(cred)
 
-#auth als parameter
 #model view, größere flask apps
 #mock
-#globale variablen

@@ -1,5 +1,6 @@
 from flask import Flask, render_template
 import firebase_handler
+#from cmsapp import firebase_handler
 import os
 
 #create Flask App
@@ -23,24 +24,20 @@ def create_app(test_config=None):
     except OSError:
         pass
 
+    #landing page
+    @app.route("/")
+    def root():
+        return render_template("index.html")
+
+    #frontend POST request with account token of logged in user/verify ID token
+    @app.route("/login", methods = ["POST"])
+    def get_token():
+        return firebase_handler.process_token(firebase_handler.FlaskRequests.get_json, firebase_handler.FirebaseTokenVerifier.verify)
+
     return app
 
 app = create_app()
 
-#landing page
-@app.route("/")
-def root():
-    return render_template("index.html")
-
-#after login page
-@app.route("/success")
-def success():
-    return render_template("success.html")
-
-#frontend POST request with account token of logged in user/verify ID token
-@app.route("/login", methods = ["POST"])
-def get_token():
-    return firebase_handler.process_token(firebase_handler.FirebaseTokenVerifier.verify)
 
 if __name__ == "__main__":
     firebase_handler.firebase_app_init()
