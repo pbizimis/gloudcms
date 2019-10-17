@@ -1,5 +1,5 @@
 from flask import Flask, render_template
-import functions
+import firebase_handler
 import os
 
 #create Flask App
@@ -40,8 +40,8 @@ def success():
 #frontend POST request with account token of logged in user/verify ID token
 @app.route("/login", methods = ["POST"])
 def get_token():
-    return functions.process_token()
+    return firebase_handler.process_token(firebase_handler.FirebaseTokenVerifier.verify)
 
 if __name__ == "__main__":
-    functions.firebase_app_init()
+    firebase_handler.firebase_app_init()
     app.run(host="127.0.0.1", port=8080, debug=True)
