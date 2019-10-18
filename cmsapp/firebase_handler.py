@@ -27,6 +27,3 @@ def process_token(get_json, verify_token):
 def firebase_app_init():
     cred = credentials.Certificate(CREDENTIALS)
     firebase_admin.initialize_app(cred)
-
-#model view, größere flask apps
-#mock

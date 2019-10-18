@@ -1,7 +1,6 @@
 firebase.auth().onAuthStateChanged(function(user) {
   if (user) {
     // User is signed in.
-    debugUI(user);
     //auth token will be send with an async request to the backend
     firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
       $(function() {

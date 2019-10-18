@@ -29,6 +29,10 @@ def create_app(test_config=None):
     def root():
         return render_template("index.html")
 
+    @app.route("/dashboard")
+    def dashboard():
+        return render_template("dashboard.html")
+
     #frontend POST request with account token of logged in user/verify ID token
     @app.route("/login", methods = ["POST"])
     def get_token():
