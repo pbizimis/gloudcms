@@ -4,3 +4,4 @@ window.onload = function() {
     ui.start("#firebaseui-auth-container", uiConfig);
   });
 }
+
