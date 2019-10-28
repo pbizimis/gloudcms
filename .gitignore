@@ -1,5 +1,6 @@
 venv/
 cmsapp/files/
+data/
 
 *.pyc
 __pycache__/

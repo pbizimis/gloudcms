@@ -4,18 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>Gloud - {% block title %}{% endblock %}</title>
-  <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
  
   <script src="https://www.gstatic.com/firebasejs/7.2.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/7.2.0/firebase-auth.js"></script>
-  <script src="{{ url_for('static', filename='firebase/firebaseconfig.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/firebase/firebaseconfig.js') }}"></script>
   <script src="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.js"></script>
   <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css">
-  <script src="{{ url_for('static', filename='firebase/firebasestartui.js') }}"></script>
-  <script src="{{ url_for('static', filename='handlers/requesthandler.js') }}"></script>
-  <script src="{{ url_for('static', filename='handlers/signouthandler.js') }}"></script>
-  <script src="{{ url_for('static', filename='handlers/signinhandler.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/firebase/firebasestartui.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/handlers/requesthandler.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/handlers/signouthandler.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/handlers/signinhandler.js') }}"></script>
 
   {% block head %}{% endblock %}
 
