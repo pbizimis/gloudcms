@@ -1,5 +1,6 @@
 from flask import Flask, render_template
 from Blueprints.auth_handler import auth_handler
+from Blueprints.dashboard import dashboard
 #from cmsapp import firebase_handler
 import os
 
@@ -26,11 +27,7 @@ def create_app(test_config=None):
 
     #registering blueprints
     app.register_blueprint(auth_handler)
-
-    @app.route("/dashboard")
-    def dashboard():
-        #if user is not logged in, redirect to auth
-        return render_template("dashboard.html")
+    app.register_blueprint(dashboard, url_prefix="/dashboard")
 
     return app
 

@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template
+from flask import Blueprint
 import flask #only for testing purposes/sessions
 import requests
 import google.oauth2.credentials
