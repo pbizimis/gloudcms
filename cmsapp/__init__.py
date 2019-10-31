@@ -29,6 +29,10 @@ def create_app(test_config=None):
     def root():
         return render_template("index.html")
 
+    @app.route("/nav")
+    def nav():
+        return render_template("nav.html")
+
     @app.route("/dashboard")
     def dashboard():
         return render_template("dashboard.html")
@@ -41,7 +45,7 @@ def create_app(test_config=None):
     return app
 
 app = create_app()
-
+#https://res.cloudinary.com/tamas-demo/image/upload/f_auto,q_auto,w_250,h_250,c_thumb,g_face,r_max,e_cartoonify/project/business-woman-2.jpg
 
 if __name__ == "__main__":
     firebase_handler.firebase_app_init()

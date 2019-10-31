@@ -8,3 +8,12 @@ dbtest = client.glouddb.list_collection_names()
 db = client.glouddb
 #test_user = db.user.insert_one({"user-id": "0001"})
 pprint(db.user.find_one())
+
+
+comment = """ {
+    _ID: ...,
+    name:
+    lastname:
+    uid:
+    articles: []
+} """
