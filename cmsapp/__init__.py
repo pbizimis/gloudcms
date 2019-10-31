@@ -1,5 +1,5 @@
 from flask import Flask, render_template
-import firebase_handler
+from Blueprints.auth_handler import auth_handler
 #from cmsapp import firebase_handler
 import os
 
@@ -24,29 +24,22 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    #landing page
-    @app.route("/")
-    def root():
-        return render_template("index.html")
-
-    @app.route("/nav")
-    def nav():
-        return render_template("nav.html")
+    #registering blueprints
+    app.register_blueprint(auth_handler)
 
     @app.route("/dashboard")
     def dashboard():
+        #if user is not logged in, redirect to auth
         return render_template("dashboard.html")
-
-    #frontend POST request with account token of logged in user/verify ID token
-    @app.route("/login", methods = ["POST"])
-    def get_token():
-        return firebase_handler.process_token(firebase_handler.FlaskRequests.get_json, firebase_handler.FirebaseTokenVerifier.verify)
 
     return app
 
 app = create_app()
-#https://res.cloudinary.com/tamas-demo/image/upload/f_auto,q_auto,w_250,h_250,c_thumb,g_face,r_max,e_cartoonify/project/business-woman-2.jpg
 
 if __name__ == "__main__":
-    firebase_handler.firebase_app_init()
+    # When running locally, disable OAuthlib's HTTPs verification.
+    # ACTION ITEM for developers:
+    #     When running in production *do not* leave this option enabled.
+    os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
+
     app.run(host="127.0.0.1", port=8080, debug=True)
