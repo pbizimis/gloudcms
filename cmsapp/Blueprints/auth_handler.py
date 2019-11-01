@@ -23,7 +23,6 @@ auth_handler = Blueprint("auth_handler", __name__, template_folder="templates", 
 
 user_info = {}
 
-#Refactoring happened
 def load_credentials():
    credentials = google.oauth2.credentials.Credentials(**flask.session['credentials'])
    return credentials
@@ -34,7 +33,7 @@ def get_user_info():
    user_info = profile.userinfo().get().execute()
    return user_info
 
-def test_docs_api():
+def test_docs_api(credentials):
    docs = googleapiclient.discovery.build(API_SERVICE_NAME, API_VERSION, credentials=credentials)
    try:
       files = docs.documents().get(documentId=DOCUMENT_ID).execute()
@@ -107,6 +106,7 @@ def oauth2callback():
 
   return flask.redirect(flask.url_for('auth_handler.login'))
 
+
 @auth_handler.route('/revoke')
 def revoke():
    if 'credentials' not in flask.session:
@@ -123,6 +123,7 @@ def revoke():
    else:
       return('An error occurred.' + print_index_table())
 
+#SAME AS LOG OUT BUT NO NEED TO REACCEPT TO TERMS OF API USAGE
 @auth_handler.route('/clear')
 def clear_credentials():
   if 'credentials' in flask.session:
