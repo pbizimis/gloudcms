@@ -1,5 +1,5 @@
-from flask import Blueprint
-import flask #only for testing purposes/sessions
+from flask import Blueprint, render_template
+import flask
 import requests
 import google.oauth2.credentials
 import google_auth_oauthlib.flow
@@ -14,38 +14,50 @@ CLIENT_SECRETS_FILE = "cmsapp/files/client_secret.json"
 
 # This OAuth 2.0 access scope allows for full read/write access to the
 # authenticated user's account and requires requests to use an SSL connection.
-SCOPES = ['https://www.googleapis.com/auth/documents']
+SCOPES = ['https://www.googleapis.com/auth/documents', "profile", "email"]
 
 API_SERVICE_NAME = 'docs'
 API_VERSION = 'v1'
 
 auth_handler = Blueprint("auth_handler", __name__, template_folder="templates", static_folder="static")
 
+user_info = {}
 
+#Refactoring happened
+def load_credentials():
+   credentials = google.oauth2.credentials.Credentials(**flask.session['credentials'])
+   return credentials
+   
+def get_user_info():
+   credentials = load_credentials()
+   profile = googleapiclient.discovery.build("oauth2", "v2", credentials=credentials)
+   user_info = profile.userinfo().get().execute()
+   return user_info
 
+def test_docs_api():
+   docs = googleapiclient.discovery.build(API_SERVICE_NAME, API_VERSION, credentials=credentials)
+   try:
+      files = docs.documents().get(documentId=DOCUMENT_ID).execute()
+      print(files["title"])
+   except:
+      print("No permission")
+   return files
 
 @auth_handler.route('/')
 def login():
    #if credentials are not in 
    if 'credentials' not in flask.session:
       return flask.redirect('/auth')
-
-   # Load credentials from the session.
-   credentials = google.oauth2.credentials.Credentials(
-         **flask.session['credentials'])
-
-   docs = googleapiclient.discovery.build(
-         API_SERVICE_NAME, API_VERSION, credentials=credentials)
-
-   files = docs.documents().get(documentId=DOCUMENT_ID).execute()
-   print(files["title"])
+   
+   credentials = load_credentials()
 
    # Save credentials back to session in case access token was refreshed.
    # ACTION ITEM: In a production app, you likely want to save these
    #              credentials in a persistent database instead.
    flask.session['credentials'] = credentials_to_dict(credentials)
 
-   return flask.jsonify(**files)
+   return flask.redirect('/dashboard/')
+
 
 @auth_handler.route('/auth')
 def authorize():
@@ -77,6 +89,7 @@ def oauth2callback():
   # verified in the authorization server response.
   #CHANGE TO MONGODB SESSION------------------------
   state = flask.session['state']
+  #print(state) 8QLlkAHS3rSWMBH2wLE23FCDNLp1Ra
 
   flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(CLIENT_SECRETS_FILE, scopes=SCOPES, state=state)
   flow.redirect_uri = flask.url_for('auth_handler.oauth2callback', _external=True)
@@ -100,7 +113,7 @@ def revoke():
       return ('You need to <a href="/authorize">authorize</a> before ' +
          'testing the code to revoke credentials.')
 
-   credentials = google.oauth2.credentials.Credentials(**flask.session['credentials'])
+   credentials = load_credentials()
 
    revoke = requests.post('https://accounts.google.com/o/oauth2/revoke', params={'token': credentials.token}, headers = {'content-type': 'application/x-www-form-urlencoded'})
 
