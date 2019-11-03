@@ -1,6 +1,7 @@
 import flask
 from flask import Blueprint, render_template
 from mongodb import save_user_to_db
+
 import requests
 import google.oauth2.credentials
 import google_auth_oauthlib.flow
@@ -9,7 +10,7 @@ from flask_jwt_extended import (
     create_access_token,
     create_refresh_token,
     get_jwt_identity, set_access_cookies,
-    set_refresh_cookies, unset_jwt_cookies, jwt_optional
+    set_refresh_cookies, unset_jwt_cookies, jwt_optional, jwt_required
 )
 
 DOCUMENT_ID = "1WmQ-XNol3eQwU2KWIxFa6UYopl2-UZBCLAILipG98fQ"
@@ -44,19 +45,14 @@ def test_docs_api(credentials):
    return files
 
 @auth_handler.route('/')
-@jwt_optional
+@jwt_optional #returns token has expired
 def login():
-   try:
-      token_status = get_jwt_identity()
-   except:
-      print("TOKEN NOT VALID")
-      raise ValueError
+   token_status = get_jwt_identity()
 
    if token_status == None:
       return flask.redirect('/auth')
    else:
       return flask.redirect('/dashboard/')
-
 
 @auth_handler.route('/auth')
 def authorize():
@@ -77,16 +73,21 @@ def authorize():
    include_granted_scopes='true')
 
    # Store the state so the callback can verify the auth server response.
-   flask.session['state'] = state
+   access_token = create_access_token(identity=state)
 
-   return flask.redirect(authorization_url)
+   # Set the JWTs and the CSRF double submit protection cookies
+   # in this response
+   resp = flask.redirect(authorization_url)
+   set_access_cookies(resp, access_token)
+
+   return resp
 
 @auth_handler.route('/oauth2callback')
+@jwt_required
 def oauth2callback():
    # Specify the state when creating the flow in the callback so that it can
    # verified in the authorization server response.
-   #CHANGE TO MONGODB SESSION------------------------
-   state = flask.session['state']
+   state = get_jwt_identity()
 
    flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(CLIENT_SECRETS_FILE, scopes=SCOPES, state=state)
    flow.redirect_uri = flask.url_for('auth_handler.oauth2callback', _external=True)

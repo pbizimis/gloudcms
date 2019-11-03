@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, session
 from flask_jwt_extended import (JWTManager)
 from Blueprints.auth_handler import auth_handler
 from Blueprints.dashboard import dashboard
@@ -38,7 +38,7 @@ def create_app(test_config=None):
     # to the refresh endpoint. Technically this is optional, but it is in
     # your best interest to not send additional cookies in the request if
     # they aren't needed.
-    app.config['JWT_ACCESS_COOKIE_PATH'] = '/'
+    #app.config['JWT_ACCESS_COOKIE_PATH'] = '/'
     app.config['JWT_REFRESH_COOKIE_PATH'] = '/token/refresh'
 
     # Enable csrf double submit protection.

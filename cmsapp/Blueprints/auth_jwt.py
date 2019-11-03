@@ -6,9 +6,8 @@ from flask_jwt_extended import (
     set_refresh_cookies, unset_jwt_cookies
 )
 
-def create_tokens(get_user_info):
-    username = get_user_info["given_name"]
-    access_token = create_access_token(identity=username)
+def create_tokens(identity):
+    access_token = create_access_token(identity=identity)
     refresh_token = create_refresh_token(identity=username)
 
     # Set the JWTs and the CSRF double submit protection cookies
