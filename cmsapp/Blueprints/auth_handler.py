@@ -1,10 +1,16 @@
-from flask import Blueprint, render_template
 import flask
+from flask import Blueprint, render_template
+from mongodb import save_user_to_db
 import requests
 import google.oauth2.credentials
 import google_auth_oauthlib.flow
 import googleapiclient.discovery
-
+from flask_jwt_extended import (
+    create_access_token,
+    create_refresh_token,
+    get_jwt_identity, set_access_cookies,
+    set_refresh_cookies, unset_jwt_cookies, jwt_optional
+)
 
 DOCUMENT_ID = "1WmQ-XNol3eQwU2KWIxFa6UYopl2-UZBCLAILipG98fQ"
 
@@ -20,15 +26,10 @@ API_SERVICE_NAME = 'docs'
 API_VERSION = 'v1'
 
 auth_handler = Blueprint("auth_handler", __name__, template_folder="templates", static_folder="static")
-
-user_info = {}
-
-def load_credentials():
-   credentials = google.oauth2.credentials.Credentials(**flask.session['credentials'])
-   return credentials
    
-def get_user_info():
-   credentials = load_credentials()
+def get_user_info(credentials):
+   if isinstance(credentials, dict):
+      credentials = google.oauth2.credentials.Credentials(**credentials)
    profile = googleapiclient.discovery.build("oauth2", "v2", credentials=credentials)
    user_info = profile.userinfo().get().execute()
    return user_info
@@ -43,19 +44,18 @@ def test_docs_api(credentials):
    return files
 
 @auth_handler.route('/')
+@jwt_optional
 def login():
-   #if credentials are not in 
-   if 'credentials' not in flask.session:
+   try:
+      token_status = get_jwt_identity()
+   except:
+      print("TOKEN NOT VALID")
+      raise ValueError
+
+   if token_status == None:
       return flask.redirect('/auth')
-   
-   credentials = load_credentials()
-
-   # Save credentials back to session in case access token was refreshed.
-   # ACTION ITEM: In a production app, you likely want to save these
-   #              credentials in a persistent database instead.
-   flask.session['credentials'] = credentials_to_dict(credentials)
-
-   return flask.redirect('/dashboard/')
+   else:
+      return flask.redirect('/dashboard/')
 
 
 @auth_handler.route('/auth')
@@ -76,7 +76,6 @@ def authorize():
    # Enable incremental authorization. Recommended as a best practice.
    include_granted_scopes='true')
 
-   #CHANGE SESSION TO MONGODB SESSION ---------------------
    # Store the state so the callback can verify the auth server response.
    flask.session['state'] = state
 
@@ -84,29 +83,37 @@ def authorize():
 
 @auth_handler.route('/oauth2callback')
 def oauth2callback():
-  # Specify the state when creating the flow in the callback so that it can
-  # verified in the authorization server response.
-  #CHANGE TO MONGODB SESSION------------------------
-  state = flask.session['state']
-  #print(state) 8QLlkAHS3rSWMBH2wLE23FCDNLp1Ra
+   # Specify the state when creating the flow in the callback so that it can
+   # verified in the authorization server response.
+   #CHANGE TO MONGODB SESSION------------------------
+   state = flask.session['state']
 
-  flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(CLIENT_SECRETS_FILE, scopes=SCOPES, state=state)
-  flow.redirect_uri = flask.url_for('auth_handler.oauth2callback', _external=True)
+   flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(CLIENT_SECRETS_FILE, scopes=SCOPES, state=state)
+   flow.redirect_uri = flask.url_for('auth_handler.oauth2callback', _external=True)
+   #delete state here
 
-  # Use the authorization server's response to fetch the OAuth 2.0 tokens.
-  authorization_response = flask.request.url
-  flow.fetch_token(authorization_response=authorization_response)
+   # Use the authorization server's response to fetch the OAuth 2.0 tokens.
+   authorization_response = flask.request.url
+   flow.fetch_token(authorization_response=authorization_response)
 
-  # Store credentials in the session.
-  # ACTION ITEM: In a production app, you likely want to save these
-  #              credentials in a persistent database instead.
-  #MONGODB SESSION-------------------------------------
-  credentials = flow.credentials
-  flask.session['credentials'] = credentials_to_dict(credentials)
+   #at this point the user is logged in
+   credentials = flow.credentials
+   user_info = get_user_info(credentials)
+   save_user_to_db(user_info, credentials)
 
-  return flask.redirect(flask.url_for('auth_handler.login'))
+   gid = user_info["id"]
+   access_token = create_access_token(identity=gid)
+   refresh_token = create_refresh_token(identity=gid)
 
+   # Set the JWTs and the CSRF double submit protection cookies
+   # in this response
+   resp = flask.redirect(flask.url_for('auth_handler.login'))
+   set_access_cookies(resp, access_token)
+   set_refresh_cookies(resp, refresh_token)
 
+   return resp
+
+#REVOKES TOKEN WHICH MEANS THAT WITH THE NEXT LOGIN YOU HAVE TO ACCEPT AGAIN TO API USAGE
 @auth_handler.route('/revoke')
 def revoke():
    if 'credentials' not in flask.session:
@@ -124,20 +131,12 @@ def revoke():
       return('An error occurred.' + print_index_table())
 
 #SAME AS LOG OUT BUT NO NEED TO REACCEPT TO TERMS OF API USAGE
-@auth_handler.route('/clear')
+@auth_handler.route('/logout')
 def clear_credentials():
   if 'credentials' in flask.session:
     del flask.session['credentials']
   return ('Credentials have been cleared.<br><br>' +
           print_index_table())
-
-def credentials_to_dict(credentials):
-  return {'token': credentials.token,
-          'refresh_token': credentials.refresh_token,
-          'token_uri': credentials.token_uri,
-          'client_id': credentials.client_id,
-          'client_secret': credentials.client_secret,
-          'scopes': credentials.scopes}
 
 def print_index_table():
   return ('<table>' +
