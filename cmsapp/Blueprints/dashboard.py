@@ -11,3 +11,8 @@ def dashboard_main():
    gid = get_jwt_identity()
    user_info = get_user_info(get_credentials(gid))
    return render_template("dashboard.html", user_info = user_info)
+
+@dashboard.route('/articles')
+@jwt_required
+def test():
+   return render_template("dashboard.html", user_info = {})

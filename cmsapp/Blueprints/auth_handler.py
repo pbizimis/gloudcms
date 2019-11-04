@@ -1,5 +1,5 @@
 import flask
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, make_response
 from mongodb import save_user_to_db
 
 import requests
@@ -12,6 +12,7 @@ from flask_jwt_extended import (
     get_jwt_identity, set_access_cookies,
     set_refresh_cookies, unset_jwt_cookies, jwt_optional, jwt_required
 )
+
 
 DOCUMENT_ID = "1WmQ-XNol3eQwU2KWIxFa6UYopl2-UZBCLAILipG98fQ"
 
@@ -45,15 +46,11 @@ def test_docs_api(credentials):
    return files
 
 @auth_handler.route('/')
-@jwt_optional #returns token has expired
+@jwt_required
 def login():
-   token_status = get_jwt_identity()
-
-   if token_status == None:
-      return flask.redirect('/auth')
-   else:
       return flask.redirect('/dashboard/')
 
+#change to login route
 @auth_handler.route('/auth')
 def authorize():
    # Create flow instance to manage the OAuth 2.0 Authorization Grant Flow steps.
@@ -73,12 +70,12 @@ def authorize():
    include_granted_scopes='true')
 
    # Store the state so the callback can verify the auth server response.
-   access_token = create_access_token(identity=state)
+   state = create_access_token(identity=state)
 
    # Set the JWTs and the CSRF double submit protection cookies
    # in this response
-   resp = flask.redirect(authorization_url)
-   set_access_cookies(resp, access_token)
+   resp = make_response(flask.redirect(authorization_url))
+   set_access_cookies(resp, state)
 
    return resp
 
@@ -108,54 +105,8 @@ def oauth2callback():
 
    # Set the JWTs and the CSRF double submit protection cookies
    # in this response
-   resp = flask.redirect(flask.url_for('auth_handler.login'))
+   resp = make_response(flask.redirect(flask.url_for('auth_handler.login')))
    set_access_cookies(resp, access_token)
    set_refresh_cookies(resp, refresh_token)
 
    return resp
-
-#REVOKES TOKEN WHICH MEANS THAT WITH THE NEXT LOGIN YOU HAVE TO ACCEPT AGAIN TO API USAGE
-@auth_handler.route('/revoke')
-def revoke():
-   if 'credentials' not in flask.session:
-      return ('You need to <a href="/authorize">authorize</a> before ' +
-         'testing the code to revoke credentials.')
-
-   credentials = load_credentials()
-
-   revoke = requests.post('https://accounts.google.com/o/oauth2/revoke', params={'token': credentials.token}, headers = {'content-type': 'application/x-www-form-urlencoded'})
-
-   status_code = getattr(revoke, 'status_code')
-   if status_code == 200:
-      return('Credentials successfully revoked.' + print_index_table())
-   else:
-      return('An error occurred.' + print_index_table())
-
-#SAME AS LOG OUT BUT NO NEED TO REACCEPT TO TERMS OF API USAGE
-@auth_handler.route('/logout')
-def clear_credentials():
-  if 'credentials' in flask.session:
-    del flask.session['credentials']
-  return ('Credentials have been cleared.<br><br>' +
-          print_index_table())
-
-def print_index_table():
-  return ('<table>' +
-          '<tr><td><a href="/test">Test an API request</a></td>' +
-          '<td>Submit an API request and see a formatted JSON response. ' +
-          '    Go through the authorization flow if there are no stored ' +
-          '    credentials for the user.</td></tr>' +
-          '<tr><td><a href="/authorize">Test the auth flow directly</a></td>' +
-          '<td>Go directly to the authorization flow. If there are stored ' +
-          '    credentials, you still might not be prompted to reauthorize ' +
-          '    the application.</td></tr>' +
-          '<tr><td><a href="/revoke">Revoke current credentials</a></td>' +
-          '<td>Revoke the access token associated with the current user ' +
-          '    session. After revoking credentials, if you go to the test ' +
-          '    page, you should see an <code>invalid_grant</code> error.' +
-          '</td></tr>' +
-          '<tr><td><a href="/clear">Clear Flask session credentials</a></td>' +
-          '<td>Clear the access token currently stored in the user session. ' +
-          '    After clearing the token, if you <a href="/test">test the ' +
-          '    API request</a> again, you should go back to the auth flow.' +
-          '</td></tr></table>')
