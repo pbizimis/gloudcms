@@ -10,7 +10,7 @@ from flask_jwt_extended import (
     create_access_token,
     create_refresh_token,
     get_jwt_identity, set_access_cookies,
-    set_refresh_cookies, unset_jwt_cookies, jwt_optional, jwt_required
+    set_refresh_cookies, jwt_optional, jwt_required, jwt_refresh_token_required
 )
 
 
@@ -46,13 +46,27 @@ def test_docs_api(credentials):
    return files
 
 @auth_handler.route('/')
-@jwt_required
-def login():
+@jwt_optional
+def index():
+   token_status = get_jwt_identity()
+   if token_status == None:
+      return flask.render_template("index.html")
+   else:
       return flask.redirect('/dashboard/')
 
+@auth_handler.route('/refresh')
+@jwt_refresh_token_required
+def refresh_token():
+   gid = get_jwt_identity()
+   access_token = create_access_token(identity=gid)
+   resp = make_response(flask.redirect('/dashboard/'))
+   set_access_cookies(resp, access_token)
+   print("Refreshed Token")
+   return resp
+
 #change to login route
-@auth_handler.route('/auth')
-def authorize():
+@auth_handler.route('/login')
+def login():
    # Create flow instance to manage the OAuth 2.0 Authorization Grant Flow steps.
    flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(CLIENT_SECRETS_FILE, scopes=SCOPES)
 
@@ -88,7 +102,6 @@ def oauth2callback():
 
    flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(CLIENT_SECRETS_FILE, scopes=SCOPES, state=state)
    flow.redirect_uri = flask.url_for('auth_handler.oauth2callback', _external=True)
-   #delete state here
 
    # Use the authorization server's response to fetch the OAuth 2.0 tokens.
    authorization_response = flask.request.url
@@ -105,7 +118,7 @@ def oauth2callback():
 
    # Set the JWTs and the CSRF double submit protection cookies
    # in this response
-   resp = make_response(flask.redirect(flask.url_for('auth_handler.login')))
+   resp = make_response(flask.redirect("/dashboard/"))
    set_access_cookies(resp, access_token)
    set_refresh_cookies(resp, refresh_token)
 

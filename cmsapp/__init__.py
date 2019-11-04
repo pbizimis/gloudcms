@@ -40,13 +40,10 @@ def create_app(test_config=None):
     # to the refresh endpoint. Technically this is optional, but it is in
     # your best interest to not send additional cookies in the request if
     # they aren't needed.
-    app.config['JWT_REFRESH_COOKIE_PATH'] = '/token/refresh'
+    app.config['JWT_REFRESH_COOKIE_PATH'] = '/refresh'
 
     # Enable csrf double submit protection.
     app.config['JWT_COOKIE_CSRF_PROTECT'] = True
-
-    #TEMP
-    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = datetime.timedelta(minutes=1)
 
     # Set the secret key to sign the JWTs with
     app.config['JWT_SECRET_KEY'] = 'super-secret'  # Change this!
@@ -54,12 +51,12 @@ def create_app(test_config=None):
     jwt = JWTManager(app)
 
     @jwt.expired_token_loader
-    def custom_expired_token_callback(expired_token):
+    def custom_expired_token_callback(token):
         return flask.redirect("/refresh")
 
     @jwt.unauthorized_loader
-    def custom_default_unauthorized_callback(expired_token):
-        return flask.render_template("index.html")
+    def custom_default_unauthorized_callback(token):
+        return flask.redirect("/")
 
     #registering blueprints
     app.register_blueprint(auth_handler)
