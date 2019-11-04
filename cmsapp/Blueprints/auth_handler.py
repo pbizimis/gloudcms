@@ -1,5 +1,5 @@
 import flask
-from flask import Blueprint, render_template, make_response
+from flask import Blueprint, render_template, make_response, request
 from mongodb import save_user_to_db
 
 import requests
@@ -54,6 +54,7 @@ def index():
    else:
       return flask.redirect('/dashboard/')
 
+#redirect to old route
 @auth_handler.route('/refresh')
 @jwt_refresh_token_required
 def refresh_token():
