@@ -41,6 +41,7 @@ def create_app(test_config=None):
     # your best interest to not send additional cookies in the request if
     # they aren't needed.
     app.config['JWT_REFRESH_COOKIE_PATH'] = '/refresh'
+    app.config['JWT_REFRESH_CSRF_COOKIE_PATH'] = '/refresh'
 
     # Enable csrf double submit protection.
     app.config['JWT_COOKIE_CSRF_PROTECT'] = True

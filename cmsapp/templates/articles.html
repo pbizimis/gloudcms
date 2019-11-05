@@ -2,10 +2,6 @@
 
 {% block title %}Articles{% endblock %}
 
-{% block head %}
-<script src="{{ url_for('static', filename='js/script.js') }}"></script>
-{% endblock %}
-
 {% block pagecontent %}
 <!-- Begin Page Content -->
 <div class="container-fluid">
@@ -44,9 +40,9 @@
           <div class="row no-gutters align-items-center">
             <div class="col mr-2">
               <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Google Docs</div>
-              <form id="link-to-doc" class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+              <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
                 <div class="input-group">
-                  <input type="text" class="form-control bg-white border-0 small" placeholder="Insert Link" aria-label="Search" aria-describedby="basic-addon2">
+                  <input type="text" id="link-to-doc" class="form-control bg-white border-0 small" placeholder="Insert Link" aria-label="Search" aria-describedby="basic-addon2">
                   <div class="input-group-append">
                     <button class="btn btn-success" type="submit">
                       <i class="fas fa-plus fa-sm"></i>
@@ -54,6 +50,8 @@
                   </div>
                 </div>
               </form>
+              <div id="error" style="display: none;"></div>
+              <div id="success" style="display: none;"></div>
             </div>
           </div>
         </div>

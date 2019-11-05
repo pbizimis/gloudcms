@@ -7,7 +7,6 @@ client = MongoClient(DATABASE_URI)
 db = client.gloudcms
 
 def save_user_to_db(user_info, credentials):
-    #if user is already in db, update credentials_dict but do not 
     credentials_dict = {
         'token': credentials.token,
         'refresh_token': credentials.refresh_token,
