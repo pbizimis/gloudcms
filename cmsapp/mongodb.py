@@ -15,7 +15,7 @@ def save_user_to_db(user_info, credentials):
         'client_secret': credentials.client_secret,
         'scopes': credentials.scopes}
 
-    db.user.update({"gid": user_info["id"]},
+    result = db.user.update({"gid": user_info["id"]},
         {
         "given_name": user_info["given_name"],
         "family_name": user_info["family_name"],
@@ -24,8 +24,12 @@ def save_user_to_db(user_info, credentials):
         "location": user_info["locale"],
         "credentials": credentials_dict},
         upsert=True)
-    return print("Updated User")
+
+    return result
 
 def get_credentials(gid):
     credentials = db.user.find_one({"gid": gid}, {"credentials": 1})
-    return credentials["credentials"]
+    try:
+        return credentials["credentials"]
+    except TypeError:
+        return None

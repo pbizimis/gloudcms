@@ -1,5 +1,6 @@
 venv/
 cmsapp/files/
+flask_start.sh
 
 *.pyc
 __pycache__/
