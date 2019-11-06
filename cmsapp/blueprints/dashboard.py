@@ -1,8 +1,8 @@
 import flask
 from flask import Blueprint, render_template, make_response, request, jsonify
-from Blueprints.auth_handler import get_user_info
-from mongodb import get_credentials
-from googleapi import get_document
+from cmsapp.blueprints.auth_handler import get_user_info
+from cmsapp.mongodb import get_credentials
+from cmsapp.googleapi import get_document
 from flask_jwt_extended import get_jwt_identity, jwt_required, unset_jwt_cookies
 
 dashboard = Blueprint("dashboard", __name__, template_folder="templates", static_folder="static")
@@ -10,6 +10,7 @@ dashboard = Blueprint("dashboard", __name__, template_folder="templates", static
 @dashboard.route('/')
 @jwt_required
 def dashboard_main():
+   #name in jwt
    gid = get_jwt_identity()
    user_info = get_user_info(get_credentials(gid))
    return render_template("dashboard.html", user_info = user_info)

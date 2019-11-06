@@ -9,7 +9,7 @@ $(document).ready(function() {
 			},
 			type : 'POST',
 			url : '/dashboard/docs',
-			headers:{"X-CSRF-TOKEN":csrftoken}
+			headers:{"X-CSRF-TOKEN": csrftoken}
 		})
 		.done(function(data) {
 

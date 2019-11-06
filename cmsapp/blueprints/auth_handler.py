@@ -1,7 +1,7 @@
 import flask
 from flask import Blueprint, render_template, make_response, request
-from mongodb import save_user_to_db
-from googleapi import get_user_info
+from cmsapp.mongodb import save_user_to_db
+from cmsapp.googleapi import get_user_info
 
 import google.oauth2.credentials
 import google_auth_oauthlib.flow
@@ -37,7 +37,6 @@ def refresh_token():
    print("Refreshed Token")
    return resp
 
-#change to login route
 @auth_handler.route('/login')
 def login():
    # Create flow instance to manage the OAuth 2.0 Authorization Grant Flow steps.
