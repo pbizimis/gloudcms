@@ -1,5 +1,5 @@
 from pymongo import MongoClient
-from pprint import pprint
+import secrets
 
 DATABASE_URI = 'mongodb://localhost:27017/'
 
@@ -15,17 +15,20 @@ def save_user_to_db(user_info, credentials):
         'client_secret': credentials.client_secret,
         'scopes': credentials.scopes}
 
-    result = db.user.update({"gid": user_info["id"]},
-        {
-        "given_name": user_info["given_name"],
-        "family_name": user_info["family_name"],
-        "gid": user_info["id"],
-        "email": user_info["email"],
-        "location": user_info["locale"],
-        "credentials": credentials_dict},
-        upsert=True)
+    if db.user.find_one({"gid": user_info["id"]}) == None:
+        db.user.insert_one({
+            "given_name": user_info["given_name"],
+            "family_name": user_info["family_name"],
+            "gid": user_info["id"],
+            "apiid": secrets.token_urlsafe(16),
+            "email": user_info["email"],
+            "location": user_info["locale"],
+            "credentials": credentials_dict})
+    else:
+        db.user.update({"gid": user_info["id"]},
+            {"$set":{"credentials": credentials_dict}})
 
-    return result
+    return
 
 def get_credentials(gid):
     credentials = db.user.find_one({"gid": gid}, {"credentials": 1})
@@ -33,3 +36,10 @@ def get_credentials(gid):
         return credentials["credentials"]
     except TypeError:
         return None
+
+def save_article(gid, article):
+    user = db.user.find_one({"gid": gid}, {"apiid": 1})
+    article["apiid"] = user["apiid"]
+    article_id = db.article.update({"url": article["url"]}, article, upsert=True)
+    return print(article_id)
+

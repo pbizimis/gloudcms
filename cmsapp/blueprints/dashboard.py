@@ -1,8 +1,8 @@
 import flask
 from flask import Blueprint, render_template, make_response, request, jsonify
 from cmsapp.blueprints.auth_handler import get_user_info
-from cmsapp.mongodb import get_credentials
-from cmsapp.googleapi import get_document
+from cmsapp.mongodb import get_credentials, save_article
+from cmsapp.googleapi import get_document, get_content
 from flask_jwt_extended import get_jwt_identity, jwt_required, unset_jwt_cookies
 
 dashboard = Blueprint("dashboard", __name__, template_folder="templates", static_folder="static")
@@ -26,6 +26,9 @@ def get_google_docs():
    documentlink = request.form["link"]
    gid = get_jwt_identity()
    document = get_document(get_credentials(gid), documentlink)
+   content = get_content(document)
+   save_article(gid, content)
+
    if document == None:
       return jsonify({"error": "Wrong Document Link"})
    return jsonify({"title": document["title"]})

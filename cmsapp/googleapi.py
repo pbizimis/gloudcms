@@ -1,6 +1,7 @@
 import re
 import googleapiclient.discovery
 import google.oauth2.credentials
+import datetime
 
 API_SERVICE_NAME = 'docs'
 API_VERSION = 'v1'
@@ -15,8 +16,6 @@ def get_document(credentials, document_link):
    docs = googleapiclient.discovery.build(API_SERVICE_NAME, API_VERSION, credentials=credentials)
    documentId = re.findall("/document/d/([a-zA-Z0-9-_]+)", document_link)[0]
    document = docs.documents().get(documentId=documentId).execute()
-   content = get_content(document)
-   print(content)
    return document
 
 def get_user_info(credentials):
@@ -43,9 +42,12 @@ def get_content(document):
     splitted_string_raw = result_string.split("\n")
     splitted_string = list(filter(None, splitted_string_raw))
     author = splitted_string[1]
+    apiid = ""
     title = document["title"]
+    url = document["title"].replace(" ", "_").lower()
     tags = splitted_string[3].split(",")
     content = {}
+    date = datetime.datetime.utcnow()
 
     for counter, elem in enumerate(splitted_string):
         if "Content" in elem:
@@ -62,6 +64,6 @@ def get_content(document):
                     para += 1
             break
     
-    result_dict = {"author": author, "title": title, "tags": tags, "content": content}
+    result_dict = {"author": author, "apiid": apiid, "title": title, "url": url, "tags": tags, "content": content, "date": date}
 
     return result_dict
