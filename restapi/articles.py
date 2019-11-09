@@ -11,3 +11,8 @@ db = client.gloudcms
 def get_articles(apiid):
     all_articles = list(db.article.find({"apiid": apiid}, {"_id": 0}))
     return jsonify(all_articles)
+
+@articles.route("/<apiid>/<article_url>", methods=["GET"])
+def get_article(apiid, article_url):
+    article = db.article.find_one({"apiid": apiid, "url": article_url}, {"_id": 0})
+    return jsonify(article)
