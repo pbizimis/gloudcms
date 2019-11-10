@@ -1,5 +1,5 @@
 from flask import Flask, render_template, session
-from restapi.articles import articles
+from apiapp.articles import articles
 import os
 
 def create_app(test_config=None):
