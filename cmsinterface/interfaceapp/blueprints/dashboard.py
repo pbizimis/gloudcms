@@ -2,7 +2,7 @@ import flask
 from flask import Blueprint, render_template, make_response, request, jsonify
 from interfaceapp.blueprints.auth_handler import get_user_info
 from interfaceapp.mongodb import get_credentials, save_article
-from interfaceapp.googleapi import get_document, get_content, create_document
+from interfaceapp.googleapi import get_document, get_content
 from flask_jwt_extended import get_jwt_identity, jwt_required, unset_jwt_cookies
 
 dashboard = Blueprint("dashboard", __name__, template_folder="templates", static_folder="static")
