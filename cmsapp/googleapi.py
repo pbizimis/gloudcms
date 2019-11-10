@@ -3,8 +3,8 @@ import googleapiclient.discovery
 import google.oauth2.credentials
 import datetime
 
-API_SERVICE_NAME = 'docs'
-API_VERSION = 'v1'
+API_SERVICE_NAME = "docs"
+API_VERSION = "v1"
 
 def get_right_credentials(credentials):
    if isinstance(credentials, dict):
@@ -30,13 +30,13 @@ def get_content(document):
     content = document.get("body").get("content")
     for c in content:
         if "paragraph" in c:
-            elements = c.get('paragraph').get('elements')
+            elements = c.get("paragraph").get("elements")
             for element in elements:
-                text_run = element.get('textRun')
+                text_run = element.get("textRun")
                 if not text_run:
                     result_string += ""
                 else:
-                    result_string += text_run.get('content')
+                    result_string += text_run.get("content")
 
     #split result_editor at \n
     splitted_string_raw = result_string.split("\n")

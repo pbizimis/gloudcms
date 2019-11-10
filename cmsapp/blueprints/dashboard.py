@@ -2,7 +2,7 @@ import flask
 from flask import Blueprint, render_template, make_response, request, jsonify
 from cmsapp.blueprints.auth_handler import get_user_info
 from cmsapp.mongodb import get_credentials, save_article
-from cmsapp.googleapi import get_document, get_content
+from cmsapp.googleapi import get_document, get_content, create_document
 from flask_jwt_extended import get_jwt_identity, jwt_required, unset_jwt_cookies
 
 dashboard = Blueprint("dashboard", __name__, template_folder="templates", static_folder="static")
@@ -20,7 +20,7 @@ def dashboard_main():
 def articles():
    return render_template("articles.html", user_info = {})
 
-@dashboard.route('/docs', methods=["POST"])
+@dashboard.route('/docs/find', methods=["POST"])
 @jwt_required
 def get_google_docs():
    documentlink = request.form["link"]
@@ -32,6 +32,11 @@ def get_google_docs():
    if document == None:
       return jsonify({"error": "Wrong Document Link"})
    return jsonify({"title": document["title"]})
+
+@dashboard.route('/docs/create', methods=["POST"])
+@jwt_required
+def create_google_docs():
+   return jsonify({"title": "Please see the recommended Editor Template."})
 
 @dashboard.route('/logout')
 @jwt_required

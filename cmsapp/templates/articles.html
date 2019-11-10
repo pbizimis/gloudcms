@@ -14,7 +14,6 @@
   <!-- Content Row -->
   <div class="row">
 
-    <!-- Earnings (Monthly) Card Example -->
     <div class="col-xl-3 col-md-6 mb-4">
       <div class="card border-left-primary shadow h-100 py-2">
         <div class="card-body">
@@ -24,23 +23,26 @@
               <div class="h5 mb-0 font-weight-bold text-gray-800">Open new Document</div>
             </div>
             <div class="col-auto">
-              <a href="#" class="btn btn-primary btn-circle">
+              <form id="create-doc">
+              <button class="btn btn-primary btn-circle" type="submit">
                 <i class="fas fa-plus"></i>
-              </a>
+              </button>
+              </form>
+            <div id="error-create" style="display: none;"></div>
+            <div id="success-create" style="display: none;"></div>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Earnings (Monthly) Card Example -->
     <div class="col-xl-3 col-md-6 mb-4">
       <div class="card border-left-success shadow h-100 py-2">
         <div class="card-body">
           <div class="row no-gutters align-items-center">
             <div class="col mr-2">
               <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Google Docs</div>
-              <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+              <form id="link-form" class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
                 <div class="input-group">
                   <input type="text" id="link-to-doc" class="form-control bg-white border-0 small" placeholder="Insert Link" aria-label="Search" aria-describedby="basic-addon2">
                   <div class="input-group-append">
@@ -50,8 +52,8 @@
                   </div>
                 </div>
               </form>
-              <div id="error" style="display: none;"></div>
-              <div id="success" style="display: none;"></div>
+              <div id="error-link" style="display: none;"></div>
+              <div id="success-link" style="display: none;"></div>
             </div>
           </div>
         </div>

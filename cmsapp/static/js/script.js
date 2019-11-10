@@ -1,25 +1,56 @@
 $(document).ready(function() {
 	var csrftoken = Cookies.get("csrf_access_token");
 
-	$('form').on('submit', function(event) {
+	$('#link-form').on('submit', function(event) {
 
 		$.ajax({
 			data : {
 				link : $('#link-to-doc').val()
 			},
 			type : 'POST',
-			url : '/dashboard/docs',
+			url : '/dashboard/docs/find',
 			headers:{"X-CSRF-TOKEN": csrftoken}
 		})
 		.done(function(data) {
 
 			if (data.error) {
-				$("#error").text(data.error).show();
-				$("#success").hide();
+				$("#error-link").text(data.error).show();
+				$("#success-link").hide();
 			}
 			else {
-				$("#success").text(data.title).show();
-				$("#error").hide();
+				$("#success-link").text(data.title).show();
+				$("#error-link").hide();
+			}
+
+		});
+
+		event.preventDefault();
+
+	});
+
+});
+
+
+
+$(document).ready(function() {
+	var csrftoken = Cookies.get("csrf_access_token");
+
+	$('#create-doc').on('submit', function(event) {
+
+		$.ajax({
+			type : 'POST',
+			url : '/dashboard/docs/create',
+			headers:{"X-CSRF-TOKEN": csrftoken}
+		})
+		.done(function(data) {
+
+			if (data.error) {
+				$("#error-create").text(data.error).show();
+				$("#success-create").hide();
+			}
+			else {
+				$("#success-create").text(data.title).show();
+				$("#error-create").hide();
 			}
 
 		});
