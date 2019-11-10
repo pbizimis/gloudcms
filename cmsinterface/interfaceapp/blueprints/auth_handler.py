@@ -1,7 +1,7 @@
 import flask
 from flask import Blueprint, render_template, make_response, request
-from cmsapp.mongodb import save_user_to_db
-from cmsapp.googleapi import get_user_info
+from interfaceapp.mongodb import save_user_to_db
+from interfaceapp.googleapi import get_user_info
 
 import google.oauth2.credentials
 import google_auth_oauthlib.flow
@@ -12,7 +12,7 @@ from flask_jwt_extended import (
     set_refresh_cookies, jwt_optional, jwt_required, jwt_refresh_token_required
 )
 
-CLIENT_SECRETS_FILE = "cmsapp/files/client_secret.json"
+CLIENT_SECRETS_FILE = "interfaceapp/files/client_secret.json"
 SCOPES = ['https://www.googleapis.com/auth/documents', "profile", "email"]
 
 auth_handler = Blueprint("auth_handler", __name__, template_folder="templates", static_folder="static")

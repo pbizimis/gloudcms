@@ -1,5 +1,5 @@
 venv/
-cmsapp/files/
+cmsinterface/interfaceapp/files/
 flask_start.sh
 
 *.pyc

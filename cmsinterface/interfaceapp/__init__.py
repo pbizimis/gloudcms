@@ -1,8 +1,8 @@
 from flask import Flask, render_template, session
 import flask
 from flask_jwt_extended import JWTManager
-from cmsapp.blueprints.auth_handler import auth_handler
-from cmsapp.blueprints.dashboard import dashboard
+from interfaceapp.blueprints.auth_handler import auth_handler
+from interfaceapp.blueprints.dashboard import dashboard
 import os
 import datetime
 
