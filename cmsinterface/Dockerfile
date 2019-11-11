@@ -1,16 +1,26 @@
+#Dockerfile for the GloudCMS admin interface
 FROM python:3.7.3-stretch
 
+LABEL maintainer="philip.bizimis@code.berlin"
+LABEL version="1.0"
+
+#set workdir and copy files
 WORKDIR /gloudcmsd
+COPY interfaceapp interfaceapp/
+COPY wsgi.py /gloudcmsd/
+COPY requirements.txt /gloudcmsd/
 
-COPY requirements.txt requirements.txt
-RUN python -m venv venv
-RUN venv/bin/pip install -r requirements.txt
+#set and activate virtual environment
+ENV VIRTUAL_ENV="/venv"
+RUN python3.7 -m venv venv
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
-COPY cmsapp cmsapp
-COPY flask_start.sh ./
+#install dependencies
+RUN pip install -r requirements.txt
 
-ENV FLASK_APP cmsapp
+#change this when building
+ENV JWT_SECRET 0000
 
 EXPOSE 8080
 
-ENTRYPOINT ["./flask_start.sh"]
+CMD ["gunicorn", "-b", "0.0.0.0:8080", "wsgi:app"]
