@@ -7,8 +7,8 @@ LABEL version="1.0"
 #set workdir and copy files
 WORKDIR /gloudcmsd
 COPY interfaceapp interfaceapp/
-COPY wsgi.py /gloudcmsd/
-COPY requirements.txt /gloudcmsd/
+COPY wsgi.py .
+COPY requirements.txt .
 
 #set and activate virtual environment
 ENV VIRTUAL_ENV="/venv"
@@ -23,4 +23,4 @@ ENV JWT_SECRET 0000
 
 EXPOSE 8080
 
-CMD ["gunicorn", "-b", "0.0.0.0:8080", "wsgi:app"]
+CMD ["gunicorn", "-b", "127.0.0.1:8080", "--workers=3","wsgi:app"]
