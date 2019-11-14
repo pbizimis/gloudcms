@@ -1,0 +1,20 @@
+version: "3.7"
+services:
+
+  interface:
+    build: ./cmsinterface
+    ports:
+      - "8080:8080"
+
+  api:
+    build: ./cmsapi
+    ports:
+      - "8081:8081"
+
+  nginx:
+    build: ./nginx
+    ports:
+      - "80:80"
+      - "81:81"
+    restart: always
+  

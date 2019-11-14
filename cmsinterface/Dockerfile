@@ -23,4 +23,4 @@ ENV JWT_SECRET 0000
 
 EXPOSE 8080
 
-CMD ["gunicorn", "-b", "127.0.0.1:8080", "--workers=3","wsgi:app"]
+CMD ["gunicorn", "-b", "0.0.0.0:8080", "--workers=3","wsgi:app"]

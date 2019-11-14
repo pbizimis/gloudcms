@@ -10,4 +10,6 @@ RUN rm -v /etc/nginx/nginx.conf
 
 ADD nginx.conf /etc/nginx/
 
-CMD ["nginx"]
+EXPOSE 80
+
+CMD ["service","nginx","start"]

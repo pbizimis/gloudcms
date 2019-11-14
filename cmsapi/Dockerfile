@@ -20,4 +20,4 @@ RUN pip install -r requirements.txt
 
 EXPOSE 8081
 
-CMD ["gunicorn", "-b", "127.0.0.1:8081", "--workers=3","wsgi:app"]
+CMD ["gunicorn", "-b", "0.0.0.0:8081", "--workers=3","wsgi:app"]
