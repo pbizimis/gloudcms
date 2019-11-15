@@ -3,11 +3,32 @@ services:
 
   interface:
     build: ./cmsinterface
+    environment:
+      MONGODB_USERNAME: mongo
+      MONGODB_PASSWORD: mongopw
+      MONGODB_HOSTNAME: mongodb
     volumes:
       - static:/cmsinterface/interfaceapp/static
 
   api:
     build: ./cmsapi
+    environment:
+      MONGODB_USERNAME: mongo
+      MONGODB_PASSWORD: mongopw
+      MONGODB_HOSTNAME: mongodb
+
+  mongodb:
+    image: mongo
+    command: mongod --auth
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: rootpw
+      MONGO_INITDB_DATABASE: gloudcms
+      MONGODB_DATA_DIR: /data/db
+      MONDODB_LOG_DIR: /dev/null
+    volumes:
+      - data:/data/db
+    
 
   nginx:
     build: ./nginx
@@ -23,4 +44,5 @@ services:
 
 volumes:
   static:
+  data:
   
