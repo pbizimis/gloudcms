@@ -5,7 +5,7 @@ LABEL maintainer="philip.bizimis@code.berlin"
 LABEL version="1.0"
 
 #set workdir and copy files
-WORKDIR /gloudcmsd
+WORKDIR /cmsinterface
 COPY interfaceapp interfaceapp/
 COPY wsgi.py .
 COPY requirements.txt .

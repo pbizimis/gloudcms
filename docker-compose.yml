@@ -3,13 +3,11 @@ services:
 
   interface:
     build: ./cmsinterface
-    ports:
-      - "8080:8080"
+    volumes:
+      - static:/cmsinterface/interfaceapp/static
 
   api:
     build: ./cmsapi
-    ports:
-      - "8081:8081"
 
   nginx:
     build: ./nginx
@@ -17,4 +15,12 @@ services:
       - "80:80"
       - "81:81"
     restart: always
+    depends_on:
+      - interface
+      - api
+    volumes:
+      - static:/gloudcmsd/cmsinterface/interfaceapp/static
+
+volumes:
+  static:
   
