@@ -1,11 +1,9 @@
-version: "3.7"
+version: "3"
 services:
 
   interface:
     build: ./cmsinterface
     environment:
-      MONGODB_USERNAME: mongo
-      MONGODB_PASSWORD: mongopw
       MONGODB_HOSTNAME: mongodb
     volumes:
       - static:/cmsinterface/interfaceapp/static
@@ -13,34 +11,38 @@ services:
   api:
     build: ./cmsapi
     environment:
-      MONGODB_USERNAME: mongo
-      MONGODB_PASSWORD: mongopw
       MONGODB_HOSTNAME: mongodb
 
   mongodb:
     image: mongo
-    command: mongod --auth
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: rootpw
       MONGO_INITDB_DATABASE: gloudcms
       MONGODB_DATA_DIR: /data/db
       MONDODB_LOG_DIR: /dev/null
     volumes:
       - data:/data/db
-    
 
   nginx:
     build: ./nginx
     ports:
       - "80:80"
-      - "81:81"
+      - "443:443"
     restart: always
     depends_on:
       - interface
       - api
     volumes:
       - static:/gloudcmsd/cmsinterface/interfaceapp/static
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
 volumes:
   static:
