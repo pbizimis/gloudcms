@@ -41,6 +41,6 @@ def get_credentials(gid):
 def save_article(gid, article):
     user = db.user.find_one({"gid": gid}, {"apiid": 1})
     article["apiid"] = user["apiid"]
-    article_id = db.article.update({"url": article["url"]}, article, upsert=True)
-    return print(article_id)
+    db.article.update({"url": article["url"]}, article, upsert=True)
+    return article["url"], user["apiid"]
 

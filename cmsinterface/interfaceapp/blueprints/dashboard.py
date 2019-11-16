@@ -27,11 +27,11 @@ def get_google_docs():
    gid = get_jwt_identity()
    document = get_document(get_credentials(gid), documentlink)
    content = get_content(document)
-   save_article(gid, content)
+   url, apiid = save_article(gid, content)
 
    if document == None:
       return jsonify({"error": "Wrong Document Link"})
-   return jsonify({"title": document["title"]})
+   return jsonify({"title": document["title"], "url": url, "apiid": apiid})
 
 @dashboard.route('/docs/create', methods=["POST"])
 @jwt_required

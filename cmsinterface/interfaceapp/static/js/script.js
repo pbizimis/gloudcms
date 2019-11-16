@@ -19,6 +19,8 @@ $(document).ready(function() {
 			}
 			else {
 				$("#success-link").text(data.title).show();
+				$("#success-url").text(data.url).show();
+				$("#success-apiid").text(data.apiid).show();
 				$("#error-link").hide();
 			}
 
