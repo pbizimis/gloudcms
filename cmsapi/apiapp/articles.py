@@ -4,7 +4,7 @@ import os
 
 articles = Blueprint("artciles", __name__)
 
-DATABASE_URI = 'mongodb://' + os.environ['MONGODB_HOSTNAME'] + ':27017/'
+DATABASE_URI = 'mongodb://gloudcms-mongo:27017/'
 client = MongoClient(DATABASE_URI)
 db = client.gloudcms
 

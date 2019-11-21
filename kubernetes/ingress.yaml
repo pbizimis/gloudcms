@@ -1,0 +1,37 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: gloudcms-ingress
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: gloudcms-ip
+    networking.gke.io/managed-certificates: philipbizimis-certificate
+spec:
+  rules:
+  - host: philipbizimis.com
+    http:
+      paths:
+      - path: /*
+        backend:
+          serviceName: gloudcms-interface
+          servicePort: 443
+#      - path: /static/*
+#        backend:
+#          serviceName: gloudcms-static
+#          servicePort: 443
+  - host: www.philipbizimis.com
+    http:
+      paths:
+      - path: /*
+        backend:
+          serviceName: gloudcms-interface
+          servicePort: 443
+#      - path: /static/*
+#        backend:
+#          serviceName: gloudcms-static
+#          servicePort: 443
+  - host: api.philipbizimis.com
+    http:
+      paths:
+      - backend:
+          serviceName: gloudcms-api
+          servicePort: 443

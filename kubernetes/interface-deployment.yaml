@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gloudcms-interface-deployment
+  labels:
+    app: gloudcms
+    environment: dev
+#Controller Spec (ReplicaSet)
+spec:
+  selector:
+      matchLabels:
+        app: gloudcms
+        tier: frontend
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: gloudcms  
+        tier: frontend
+    #Pod spec
+    spec:
+      containers:
+      - name: gloudcms-interface-container
+        image: gcr.io/gloudcms/gloudcms-interface:v1.2
+        ports:
+         - containerPort: 8080
