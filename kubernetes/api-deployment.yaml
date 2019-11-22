@@ -21,6 +21,6 @@ spec:
     spec:
       containers:
       - name: gloudcms-api-container
-        image: gcr.io/gloudcms/gloudcms-api:v1.2
+        image: gcr.io/gloudcms/gloudcms-api:v1.4.1
         ports:
          - containerPort: 8081
