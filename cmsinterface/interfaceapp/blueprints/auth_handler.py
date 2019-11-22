@@ -24,7 +24,7 @@ def index():
    if token_status == None:
       return flask.render_template("index.html")
    else:
-      return flask.redirect('/dashboard/')
+      return flask.redirect('https://philipbizimis.com/dashboard/')
 
 #redirect to old route
 @auth_handler.route('/refresh')
@@ -32,7 +32,7 @@ def index():
 def refresh_token():
    gid = get_jwt_identity()
    access_token = create_access_token(identity=gid)
-   resp = make_response(flask.redirect('/dashboard/'))
+   resp = make_response(flask.redirect('https://philipbizimis.com/dashboard/'))
    set_access_cookies(resp, access_token)
    print("Refreshed Token")
    return resp
@@ -81,7 +81,7 @@ def oauth2callback():
    access_token = create_access_token(identity=gid)
    refresh_token = create_refresh_token(identity=gid)
 
-   resp = make_response(flask.redirect("/dashboard/"))
+   resp = make_response(flask.redirect("https://philipbizimis.com/dashboard/"))
    set_access_cookies(resp, access_token)
    set_refresh_cookies(resp, refresh_token)
 

@@ -51,11 +51,11 @@ def create_app(test_config=None):
 
     @jwt.expired_token_loader
     def custom_expired_token_callback(token):
-        return flask.redirect("/refresh")
+        return flask.redirect("https://philipbizimis.com/refresh")
 
     @jwt.unauthorized_loader
     def custom_default_unauthorized_callback(token):
-        return flask.redirect("/")
+        return flask.redirect("https://philipbizimis.com/")
 
     #registering blueprints
     app.register_blueprint(auth_handler)

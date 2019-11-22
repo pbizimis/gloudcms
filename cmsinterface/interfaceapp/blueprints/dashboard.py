@@ -25,13 +25,13 @@ def articles():
 def get_google_docs():
    documentlink = request.form["link"]
    gid = get_jwt_identity()
-   document = get_document(get_credentials(gid), documentlink)
-   content = get_content(document)
-   url, apiid = save_article(gid, content)
-
-   if document == None:
+   try:
+      document = get_document(get_credentials(gid), documentlink)
+      content = get_content(document)
+      url, apiid = save_article(gid, content)
+      return jsonify({"title": document["title"], "url": url, "apiid": apiid})
+   except:
       return jsonify({"error": "Wrong Document Link"})
-   return jsonify({"title": document["title"], "url": url, "apiid": apiid})
 
 @dashboard.route('/docs/create', methods=["POST"])
 @jwt_required
@@ -41,6 +41,6 @@ def create_google_docs():
 @dashboard.route('/logout')
 @jwt_required
 def logout():
-   resp = make_response(flask.redirect("/"))
+   resp = make_response(flask.redirect("https://philipbizimis.com/"))
    unset_jwt_cookies(resp)
    return resp
