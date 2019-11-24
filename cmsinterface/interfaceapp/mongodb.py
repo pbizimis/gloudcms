@@ -2,12 +2,13 @@ from pymongo import MongoClient
 import secrets
 import os
 
-DATABASE_URI = 'mongodb://gloudcms-mongo:27017/'
+DATABASE_URI = 'mongodb://' + os.environ["MONGO_IP"] + ':27017/'
 
 client = MongoClient(DATABASE_URI)
 db = client.gloudcms
 
-def save_user_to_db(user_info, credentials):
+def save_user_mongo(user_info, credentials):
+
     credentials_dict = {
         'token': credentials.token,
         'refresh_token': credentials.refresh_token,
@@ -31,14 +32,18 @@ def save_user_to_db(user_info, credentials):
 
     return
 
-def get_credentials(gid):
+def get_user_data_mongo(gid):
+    user_info = db.user.find_one({"gid": gid}, {"given_name": 1, "family_name": 1, "apiid": 1})
+    return user_info
+
+def get_credentials_mongo(gid):
     credentials = db.user.find_one({"gid": gid}, {"credentials": 1})
     try:
         return credentials["credentials"]
     except TypeError:
         return None
 
-def save_article(gid, article):
+def save_article_mongo(gid, article):
     user = db.user.find_one({"gid": gid}, {"apiid": 1})
     article["apiid"] = user["apiid"]
     db.article.update({"url": article["url"]}, article, upsert=True)

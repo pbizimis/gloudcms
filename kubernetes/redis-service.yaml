@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+ name: gloudcms-redis
+ labels:
+   app: gloudcms
+spec:
+  selector:
+    app: gloudcms
+    tier: memorydatabase
+  ports:
+  - port: 6379
+    targetPort: 6379

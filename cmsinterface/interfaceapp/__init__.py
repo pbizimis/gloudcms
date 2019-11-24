@@ -10,9 +10,6 @@ import datetime
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
-    app.config.from_mapping(
-        SECRET_KEY='dev',
-    )
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
@@ -51,21 +48,15 @@ def create_app(test_config=None):
 
     @jwt.expired_token_loader
     def custom_expired_token_callback(token):
-        return flask.redirect("https://philipbizimis.com/refresh")
+        return flask.redirect(os.environ["RE_URL"] + "/refresh")
 
     @jwt.unauthorized_loader
     def custom_default_unauthorized_callback(token):
-        return flask.redirect("https://philipbizimis.com/")
+        return flask.redirect(os.environ["RE_URL"] + "/")
 
     #registering blueprints
     app.register_blueprint(auth_handler)
     app.register_blueprint(dashboard, url_prefix="/dashboard")
-
-    # When running locally, disable OAuthlib's HTTPs verification.
-    # ACTION ITEM for developers:
-    #     When running in production *do not* leave this option enabled.
-    os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
-    os.environ["OAUTHLIB_RELAX_TOKEN_SCOPE"] = "1"
 
     return app
 

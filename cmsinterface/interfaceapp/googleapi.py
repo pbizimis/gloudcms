@@ -22,7 +22,6 @@ def get_user_info(credentials):
    credentials = get_right_credentials(credentials)
    user_info_service = googleapiclient.discovery.build("oauth2", "v2", credentials=credentials)
    user_info = user_info_service.userinfo().get().execute()
-
    return user_info
 
 def get_content(document):

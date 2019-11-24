@@ -21,6 +21,21 @@ spec:
     spec:
       containers:
       - name: gloudcms-interface-container
-        image: gcr.io/gloudcms/gloudcms-interface:v1.3
+        image: gcr.io/gloudcms/gloudcms-interface:v1.5
         ports:
          - containerPort: 8080
+        env:
+        - name: JWT_SECRET
+          value: "2589375237898"
+        - name: SECRET_KEY
+          value: "7853492879352"
+        - name: REDIS_IP
+          value: gloudcms-redis
+        - name: MONGO_IP
+          value: gloudcms-mongo
+        - name: RE_URL
+          value: https://philipbizimis.com
+        - name: OAUTHLIB_INSECURE_TRANSPORT
+          value: "0"
+        - name: OAUTHLIB_RELAX_TOKEN_SCOPE
+          value: "0"

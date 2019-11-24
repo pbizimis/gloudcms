@@ -18,9 +18,6 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 #install dependencies
 RUN pip install -r requirements.txt
 
-#change this when building
-ENV JWT_SECRET 0000
-
 EXPOSE 8080
 
 CMD ["gunicorn", "-b", "0.0.0.0:8080", "--workers=3","wsgi:app"]

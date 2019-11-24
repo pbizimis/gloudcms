@@ -1,7 +1,9 @@
 import flask
 from flask import Blueprint, render_template, make_response, request
-from interfaceapp.mongodb import save_user_to_db
+from interfaceapp.mongodb import save_user_mongo, get_user_data_mongo
 from interfaceapp.googleapi import get_user_info
+from interfaceapp.redisdb import set_user_data_redis
+import os
 
 import google.oauth2.credentials
 import google_auth_oauthlib.flow
@@ -24,7 +26,7 @@ def index():
    if token_status == None:
       return flask.render_template("index.html")
    else:
-      return flask.redirect('https://philipbizimis.com/dashboard/')
+      return flask.redirect(os.environ["RE_URL"] + '/dashboard/')
 
 #redirect to old route
 @auth_handler.route('/refresh')
@@ -32,9 +34,8 @@ def index():
 def refresh_token():
    gid = get_jwt_identity()
    access_token = create_access_token(identity=gid)
-   resp = make_response(flask.redirect('https://philipbizimis.com/dashboard/'))
+   resp = make_response(flask.redirect(os.environ["RE_URL"] + '/dashboard/'))
    set_access_cookies(resp, access_token)
-   print("Refreshed Token")
    return resp
 
 @auth_handler.route('/login')
@@ -71,17 +72,21 @@ def oauth2callback():
    authorization_response = flask.request.url
    flow.fetch_token(authorization_response=authorization_response)
 
-   #save new credentials to db
+   #save user info to mongodb
    credentials = flow.credentials
    user_info = get_user_info(credentials)
-   save_user_to_db(user_info, credentials)
+   gid = user_info["id"]
+   save_user_mongo(user_info, credentials)
+   apiid = get_user_data_mongo(gid)["apiid"]
+
+   #save user info and credentials to redis
+   set_user_data_redis(gid, user_info, apiid)
 
    #set JWT Cookie to know that the user of the google id is logged in
-   gid = user_info["id"]
    access_token = create_access_token(identity=gid)
    refresh_token = create_refresh_token(identity=gid)
 
-   resp = make_response(flask.redirect("https://philipbizimis.com/dashboard/"))
+   resp = make_response(flask.redirect(os.environ["RE_URL"] + "/dashboard/"))
    set_access_cookies(resp, access_token)
    set_refresh_cookies(resp, refresh_token)
 
