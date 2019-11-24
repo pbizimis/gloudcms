@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+  <title>Client-Example</title>
+</head>
+<body>
+    <h2>There are {{ number_of_articles }} articles.</h2>
+    {% for article in articles%}
+    <div>
+        <h1>{{ article.title }}</h1>
+        <h2>{{ article.author }}</h2>
+        {% for key, value in article.content.items() %}
+            {% if "picture" in key %}
+                <img class="parapicture" src="{{ value }}">
+            {% else %}
+                <p>{{ value }}</p>
+            {% endif %}
+        {% endfor %}
+        <p>{{ article.tags }}</p>
+    </div>
+    {% endfor %}
+</body>

@@ -6,6 +6,6 @@ v1_endpoint = Blueprint("v1_endpoint", __name__)
 def welcome():
     resp = {
         "version": "v1",
-        "available": {"endpoints": "content/article", "parameters": {"<apiid>": "for all articles", "<apiid/document_url>": "for a specific article"}}
+        "available": {"endpoints": "content/articles", "parameters": {"<apiid>": "for all articles", "<apiid/document_url>": "for a specific article"}}
     }
     return jsonify(resp)

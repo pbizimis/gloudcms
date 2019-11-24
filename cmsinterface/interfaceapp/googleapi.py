@@ -24,6 +24,7 @@ def get_user_info(credentials):
    user_info = user_info_service.userinfo().get().execute()
    return user_info
 
+#Refactoring9
 def get_content(document):
     result_string = ""
     content = document.get("body").get("content")
