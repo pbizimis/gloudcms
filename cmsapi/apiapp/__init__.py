@@ -1,5 +1,8 @@
-from flask import Flask, render_template, session
+from flask import Flask, redirect, jsonify
 from apiapp.articles import articles
+from apiapp.authors import authors
+from apiapp.search import search
+from apiapp.account import account
 from apiapp.v1_endpoint import v1_endpoint
 import os
 
@@ -21,10 +24,17 @@ def create_app(test_config=None):
 
     @app.route("/", methods=["GET"])
     def success():
-        return "Please use /gloudcms/api/v1"
+        return jsonify({"message": "Please use https://api.philipbizimis.com/v1"})
 
-    app.register_blueprint(articles, url_prefix="/gloudcms/api/v1/content/articles")
-    app.register_blueprint(v1_endpoint, url_prefix="/gloudcms/api/v1")
+    @app.errorhandler(404)
+    def page_not_found(e):
+        return redirect("https://api.philipbizimis.com/v1")
+
+    app.register_blueprint(articles, url_prefix="/v1/articles")
+    app.register_blueprint(authors, url_prefix="/v1/authors")
+    app.register_blueprint(search, url_prefix="/v1/search")
+    app.register_blueprint(account, url_prefix="/v1/account")
+    app.register_blueprint(v1_endpoint, url_prefix="/v1")
 
     return app
 

@@ -1,19 +1,24 @@
 from flask import Blueprint, jsonify
-from pymongo import MongoClient
-import os
+from apiapp.mongodb import query_articles, query_article, query_article_titles, query_articles_length
 
-articles = Blueprint("artciles", __name__)
+articles = Blueprint("articles", __name__)
 
-DATABASE_URI = 'mongodb://gloudcms-mongo:27017/'
-client = MongoClient(DATABASE_URI)
-db = client.gloudcms
+@articles.route("/<apiid>/<order>", methods=["GET"])
+def query_articles_route(apiid, order):
+    articles = query_articles(apiid, order)
+    return jsonify(articles)
 
-@articles.route("/<apiid>", methods=["GET"])
-def get_articles(apiid):
-    all_articles = list(db.article.find({"apiid": apiid}, {"_id": 0}))
-    return jsonify(all_articles)
-
-@articles.route("/<apiid>/<article_url>", methods=["GET"])
-def get_article(apiid, article_url):
-    article = db.article.find_one({"apiid": apiid, "url": article_url}, {"_id": 0})
+@articles.route("/<apiid>/article/<article_url>", methods=["GET"])
+def query_article_route(apiid, article_url):
+    article = query_article(apiid, article_url)
     return jsonify(article)
+
+@articles.route("/<apiid>/titles", methods=["GET"])
+def query_article_titles_route(apiid):
+    article_titles = query_article_titles(apiid)
+    return jsonify(article_titles)
+
+@articles.route("/<apiid>/length/<order>", methods=["GET"])
+def query_articles_length_route(apiid, order):
+    articles_length = query_articles_length(apiid, order)
+    return jsonify(articles_length)

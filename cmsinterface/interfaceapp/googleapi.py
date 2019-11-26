@@ -24,7 +24,7 @@ def get_user_info(credentials):
    user_info = user_info_service.userinfo().get().execute()
    return user_info
 
-#Refactoring9
+#Refactoring
 def get_content(document):
     result_string = ""
     content = document.get("body").get("content")
@@ -41,29 +41,37 @@ def get_content(document):
     #split result_editor at \n
     splitted_string_raw = result_string.split("\n")
     splitted_string = list(filter(None, splitted_string_raw))
+    #build result dict
     author = splitted_string[1]
     apiid = ""
     title = document["title"]
     url = document["title"].replace(" ", "_").lower()
     tags = splitted_string[3].split(",")
-    content = {}
     date = datetime.datetime.utcnow()
+    content = []
 
-    for counter, elem in enumerate(splitted_string):
+    element_dict = {}
+    element_dict["pics"] = []
+    found_content = 0
+    found_picture = 0
+    #loops through array with content
+    for elem in splitted_string:
+        if found_content == 1:
+            if "Picture" in elem:
+                found_picture = 1
+                continue
+            if found_picture == 1:
+                element_dict["pics"].append(elem)
+                found_picture = 0
+                continue
+            element_dict["para"] = elem
+            content.append(element_dict.copy())
+            element_dict = {}
+            element_dict["pics"] = []
+            continue
+        #find index where content starts
         if "Content" in elem:
-            para = 1
-            pic = 1
-            pic_indexes = []
-            for x in range(counter+1, len(splitted_string)):
-                if "Picture:" == splitted_string[x]:
-                    content["picture" + str(pic)] = splitted_string[x+1]
-                    pic_indexes.append(x+1)
-                    pic += 1
-                elif x not in pic_indexes:
-                    content["paragraph" + str(para)] = splitted_string[x]
-                    para += 1
-            break
+            found_content = 1
     
     result_dict = {"author": author, "apiid": apiid, "title": title, "url": url, "tags": tags, "content": content, "date": date}
-
     return result_dict

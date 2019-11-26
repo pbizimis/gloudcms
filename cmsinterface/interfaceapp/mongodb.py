@@ -1,4 +1,4 @@
-from pymongo import MongoClient
+from pymongo import MongoClient, TEXT, ASCENDING
 import secrets
 import os
 
@@ -6,6 +6,12 @@ DATABASE_URI = 'mongodb://' + os.environ["MONGO_IP"] + ':27017/'
 
 client = MongoClient(DATABASE_URI)
 db = client.gloudcms
+
+#INDEXES
+#sparse compound index, so only existence of text index fields determine whether the index is being used
+db.articles.create_index([("apiid", ASCENDING), ("content.para", TEXT), ("title", TEXT)], default_language = "english")
+#index for apiid only so no need for .hint()
+db.articles.create_index([("apiid", ASCENDING)])
 
 def save_user_mongo(user_info, credentials):
 
@@ -46,6 +52,6 @@ def get_credentials_mongo(gid):
 def save_article_mongo(gid, article):
     user = db.user.find_one({"gid": gid}, {"apiid": 1})
     article["apiid"] = user["apiid"]
-    db.article.update({"url": article["url"]}, article, upsert=True)
+    db.articles.update({"url": article["url"]}, article, upsert=True)
+    db.articles.create
     return article["url"], user["apiid"]
-
