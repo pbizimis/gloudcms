@@ -10,6 +10,9 @@ def query_keyword_route(apiid, keyword):
 
 @search.route("/<apiid>/search/tags/<tags>/<intersect>", methods=["GET"])
 def query_tags_route(apiid, tags, intersect):
-    tags = tags.split(",")
-    articles = query_tags(apiid, tags, intersect)
-    return jsonify(articles)
+    if intersect == "i" or intersect == "n":
+        tags = tags.split(",")
+        articles = query_tags(apiid, tags, intersect)
+        return jsonify(articles)
+    else:
+        return jsonify({"error": "Please use i or n and not " + intersect})

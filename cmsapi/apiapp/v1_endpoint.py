@@ -23,7 +23,7 @@ def welcome():
                     "/length/<1/-1>": "get all articles ordered by length in either ascending (1) or descending (-1) order"}},
                 {"endpoints": "/authors", "parameters": {
                     "": "get all authors and their articles",
-                    "/<author>/<1/-1>": "get all articles by one author ordered by date in either ascending (1) or descending (-1) order"}}
+                    "/<author>/<1/-1>": "get all articles by one author (type the name with spaces) ordered by date in either ascending (1) or descending (-1) order"}}
                 ]
     }}
     return jsonify(instructions)
