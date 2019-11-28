@@ -59,7 +59,7 @@ def get_content(document):
     #loops through array with content
     for elem in splitted_string:
         if found_content == 1:
-            if "picture" in elem.lower():
+            if "picture:" in elem.lower():
                 found_picture = 1
                 continue
             if found_picture == 1:
@@ -74,6 +74,6 @@ def get_content(document):
         #find index where content starts
         if "Content" in elem:
             found_content = 1
-    
+    print(content)
     raw_article = {"author": author, "title": title, "url": url, "tags": tags, "content": content}
     return raw_article

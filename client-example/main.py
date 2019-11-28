@@ -15,23 +15,22 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-
-    apiid = "fxzutIo7AfS-g4-VMJyQhA"
+    apiid = "SwwOIFNjiiepJDWANoRU4g"
 
     @app.route("/", methods=["GET"])
     def all_articles():
-        resp = requests.get("https://api.philipbizimis.com/gloudcms/api/v1/content/articles/" + apiid)
+        resp = requests.get("https://api.philipbizimis.com/v1/" + apiid + "/articles/date/-1")
         if resp.status_code == 200:
             number_of_articles = len(resp.json())
             return render_template("index.html", articles = resp.json(), number_of_articles = number_of_articles)
-        return print(resp.status_code)
+        return resp.status_code
 
     @app.route("/article/<article_url>", methods=["GET"])
     def one_article(article_url):
-        resp = requests.get("https://api.philipbizimis.com/gloudcms/api/v1/content/articles/" + apiid + "/" + article_url)
+        resp = requests.get("https://api.philipbizimis.com/v1/" + apiid + "/articles/article/" + article_url)
         if resp.status_code == 200:
             return render_template("article.html", article = resp.json())
-        return print(resp.status_code)
+        return resp.status_code
 
     return app
 

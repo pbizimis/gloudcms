@@ -12,12 +12,11 @@
     <div>
         <h1>{{ article.title }}</h1>
         <h2>{{ article.author }}</h2>
-        {% for key, value in article.content.items() %}
-            {% if "picture" in key %}
-                <img class="parapicture" src="{{ value }}">
-            {% else %}
-                <p>{{ value }}</p>
-            {% endif %}
+        {% for contentblock in article.content %}
+            {% for pic in contentblock.pics %}
+                <img class="parapicture" src="{{ pic }}">
+            {% endfor %}
+                <p>{{ contentblock.para }}</p>
         {% endfor %}
         <p>{{ article.tags }}</p>
         <p>{{ article.date }}</p>
