@@ -1,0 +1,23 @@
+apiVersion: networking.gke.io/v1beta1
+kind: ManagedCertificate
+metadata:
+  name: apiphilipbizimis-certificate
+spec:
+  domains:
+    - api.philipbizimis.com
+---
+apiVersion: networking.gke.io/v1beta1
+kind: ManagedCertificate
+metadata:
+  name: philipbizimis-certificate
+spec:
+  domains:
+    - philipbizimis.com
+---
+apiVersion: networking.gke.io/v1beta1
+kind: ManagedCertificate
+metadata:
+  name: wwwphilipbizimis-certificate
+spec:
+  domains:
+    - www.philipbizimis.com

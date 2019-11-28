@@ -5,8 +5,12 @@ DATABASE_URI = 'mongodb://' + os.environ["MONGO_IP"] + ':27017/'
 client = MongoClient(DATABASE_URI)
 db = client.gloudcms
 
-def query_articles(apiid, order):
+def query_articles_date(apiid, order):
     articles = list(db.articles.find({"apiid": apiid}, {"_id": 0}).sort("date", int(order)))
+    return articles
+
+def query_articles_modified(apiid, order):
+    articles = list(db.articles.find({"apiid": apiid}, {"_id": 0}).sort("lastModified", int(order)))
     return articles
 
 def query_article(apiid, article_url):
@@ -36,7 +40,10 @@ def query_article_titles(apiid):
         {"$group": {"_id": None, "articles": { "$push": "$title"}}},
         {"$project": {"_id": 0}}
     ]
-    articles = list(db.articles.aggregate(pipeline))[0]
+    try:
+        articles = list(db.articles.aggregate(pipeline))[0]
+    except IndexError:
+        articles = {"error": "You don't have any articles!"}
     return articles
 
 def query_articles_by_author(apiid):
@@ -85,7 +92,9 @@ def query_stats(apiid):
         {"$unwind": "$stats"},
         {"$project": {"stats": "$stats", "tags": {"topFiveTags": "$topFiveTags"}}},
         {"$replaceRoot": {"newRoot":  {"$mergeObjects": ["$stats", "$tags"]}}}
-
     ]
-    account_stats = list(db.articles.aggregate(pipeline))[0]
+    try:
+        account_stats = list(db.articles.aggregate(pipeline))[0]
+    except IndexError:
+        account_stats = {"error": "You don't have any articles!"}
     return account_stats

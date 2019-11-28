@@ -17,7 +17,7 @@ spec:
   - host: api.philipbizimis.com
     http:
       paths:
-      - path: /gloudcms/api/v1/*
+      - path: /v1/*
         backend:
           serviceName: gloudcms-api
           servicePort: 443

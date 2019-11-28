@@ -26,15 +26,16 @@ def index():
    if token_status == None:
       return flask.render_template("index.html")
    else:
-      return flask.redirect(os.environ["RE_URL"] + '/dashboard/')
+      return flask.redirect(os.environ["RE_URL"] + '/dashboard')
 
 #redirect to old route
-@auth_handler.route('/refresh')
+@auth_handler.route('/refresh/<old_route>', methods=["POST", "GET"])
 @jwt_refresh_token_required
-def refresh_token():
+def refresh_token(old_route):
    gid = get_jwt_identity()
    access_token = create_access_token(identity=gid)
-   resp = make_response(flask.redirect(os.environ["RE_URL"] + '/dashboard/'))
+   old_route = old_route.replace("*", "/")
+   resp = make_response(flask.redirect(os.environ["RE_URL"] + old_route))
    set_access_cookies(resp, access_token)
    return resp
 
@@ -43,10 +44,11 @@ def login():
    # Create flow instance to manage the OAuth 2.0 Authorization Grant Flow steps.
    flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(CLIENT_SECRETS_FILE, scopes=SCOPES)
 
-   flow.redirect_uri = flask.url_for('auth_handler.oauth2callback', _external=True, _scheme="https")
+   flow.redirect_uri = flask.url_for('auth_handler.oauth2callback', _external=True, _scheme=os.environ["SCHEME"])
 
    authorization_url, state = flow.authorization_url(
    access_type='offline',
+   prompt='consent',
    # Enable incremental authorization. Recommended as a best practice.
    include_granted_scopes='true')
 
@@ -66,7 +68,7 @@ def oauth2callback():
    state = get_jwt_identity()
 
    flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(CLIENT_SECRETS_FILE, scopes=SCOPES, state=state)
-   flow.redirect_uri = flask.url_for('auth_handler.oauth2callback', _external=True, _scheme="https")
+   flow.redirect_uri = flask.url_for('auth_handler.oauth2callback', _external=True, _scheme=os.environ["SCHEME"])
 
    # Use the authorization server's response to fetch the OAuth 2.0 tokens.
    authorization_response = flask.request.url
@@ -76,8 +78,7 @@ def oauth2callback():
    credentials = flow.credentials
    user_info = get_user_info(credentials)
    gid = user_info["id"]
-   save_user_mongo(user_info, credentials)
-   apiid = get_user_data_mongo(gid)["apiid"]
+   apiid = save_user_mongo(user_info, credentials)
 
    #save user info and credentials to redis
    set_user_data_redis(gid, user_info, apiid)

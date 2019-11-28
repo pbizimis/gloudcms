@@ -1,0 +1,81 @@
+apiVersion: cloud.google.com/v1beta1
+kind: BackendConfig
+metadata:
+  name: cdn-backendconfig
+spec:
+  cdn:
+    enabled: true
+    cachePolicy:
+      includeHost: true
+      includeProtocol: true
+      includeQueryString: false
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    beta.cloud.google.com/backend-config: '{"ports": {"443":"cdn-backendconfig"}}'
+  name: gloudcms-interface
+  labels:
+    app: gloudcms
+spec:
+  type: NodePort
+  selector:
+    app: gloudcms
+    tier: interface
+  ports:
+  - port: 443
+    targetPort: 8080
+    protocol: TCP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gloudcms-interface-deployment
+  labels:
+    app: gloudcms
+    environment: dev
+#Controller Spec (ReplicaSet)
+spec:
+  selector:
+      matchLabels:
+        app: gloudcms
+        tier: interface
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: gloudcms  
+        tier: interface
+    #Pod spec
+    spec:
+      containers:
+      - name: gloudcms-interface-container
+        image: gcr.io/gloudcms/gloudcms-interface:v1.7.9
+        ports:
+         - containerPort: 8080
+        env:
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: mysecret
+              key: jwt_secret
+        - name: SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: mysecret
+              key: secret_key_interface
+        - name: REDIS_MASTER
+          value: redis-master
+        - name: REDIS_SLAVE
+          value: redis-slave
+        - name: MONGO_IP
+          value: gloudcms-mongo
+        - name: RE_URL
+          value: https://philipbizimis.com
+        - name: SCHEME
+          value: https
+        - name: OAUTHLIB_INSECURE_TRANSPORT
+          value: "0"
+        - name: OAUTHLIB_RELAX_TOKEN_SCOPE
+          value: "0"

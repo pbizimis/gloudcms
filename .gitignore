@@ -11,6 +11,4 @@ instance/
 .coverage
 htmlcov/
 
-dist/
-build/
-*.egg-info/
+kubernetes/secrets.yaml

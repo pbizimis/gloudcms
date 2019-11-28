@@ -1,7 +1,6 @@
 import re
 import googleapiclient.discovery
 import google.oauth2.credentials
-import datetime
 
 API_SERVICE_NAME = "docs"
 API_VERSION = "v1"
@@ -41,13 +40,16 @@ def get_content(document):
     #split result_editor at \n
     splitted_string_raw = result_string.split("\n")
     splitted_string = list(filter(None, splitted_string_raw))
+
+    #check template
+    if "author" not in splitted_string[0].lower() or "tags" not in splitted_string[2].lower() or "content" not in splitted_string[4].lower():
+        raise IndexError
+
     #build result dict
     author = splitted_string[1]
-    apiid = ""
     title = document["title"]
     url = document["title"].replace(" ", "_").lower()
     tags = splitted_string[3].split(",")
-    date = datetime.datetime.utcnow()
     content = []
 
     element_dict = {}
@@ -57,7 +59,7 @@ def get_content(document):
     #loops through array with content
     for elem in splitted_string:
         if found_content == 1:
-            if "Picture" in elem:
+            if "picture" in elem.lower():
                 found_picture = 1
                 continue
             if found_picture == 1:
@@ -73,5 +75,5 @@ def get_content(document):
         if "Content" in elem:
             found_content = 1
     
-    result_dict = {"author": author, "apiid": apiid, "title": title, "url": url, "tags": tags, "content": content, "date": date}
-    return result_dict
+    raw_article = {"author": author, "title": title, "url": url, "tags": tags, "content": content}
+    return raw_article

@@ -3,28 +3,29 @@ import json
 import os
 from interfaceapp.mongodb import get_user_data_mongo, get_credentials_mongo
 
-r = redis.Redis(host=os.environ["REDIS_IP"], port=6379, db=0)
+#redis master for write-processes
+rm = redis.Redis(host=os.environ["REDIS_MASTER"], port=6379, db=0)
+#redis slave for read-processes
+rs = redis.Redis(host=os.environ["REDIS_SLAVE"], port=6379, db=0)
 
 def clear_user_data_redis(gid):
-    return r.delete("user:" + gid)
+    return rm.delete("user:" + gid)
         
 def test_and_set_user_data_redis(gid):
-    if r.hget("user:" + gid, "name") == None:
+    if rs.hget("user:" + gid, "name") == None:
         return set_user_data_redis(gid)
-    else:
-        return
+    return True
         
 def test_and_set_credentials_redis(gid):
-    if r.hget("user:" + gid, "credentials") == None:
+    if rs.hget("user:" + gid, "credentials") == None:
         return set_credentials_redis(gid)
-    else:
-        return
+    return True
 
 #set user data in redis
 def set_user_data_redis(gid, user_info = None, apiid = None):
 
     #pipeline for saving data
-    pipe = r.pipeline()
+    pipe = rm.pipeline()
 
     if user_info == None and apiid == None:
         user_info = get_user_data_mongo(gid)
@@ -40,10 +41,9 @@ def set_user_data_redis(gid, user_info = None, apiid = None):
 def set_credentials_redis(gid):
 
     #pipeline for saving credentials
-    pipe = r.pipeline()
+    pipe = rm.pipeline()
 
     credentials = get_credentials_mongo(gid)
-
     #json dumps since hmset raises DataError due to array inside the dict
     pipe.hset("user:" + gid, "credentials", json.dumps(credentials))
 
@@ -54,7 +54,7 @@ def set_credentials_redis(gid):
 def get_user_info_redis(gid):
     test_and_set_user_data_redis(gid)
 
-    pipe = r.pipeline()
+    pipe = rs.pipeline()
 
     pipe.hget("user:" + gid, "name")
     pipe.hget("user:" + gid, "picture")
@@ -67,5 +67,14 @@ def get_user_info_redis(gid):
 #get user credentials
 def get_user_credentials_redis(gid):
     test_and_set_credentials_redis(gid)
-    credentials = json.loads(r.hget("user:" + gid, "credentials"))
-    return credentials
+    credentials = json.loads(rs.hget("user:" + gid, "credentials"))
+    with open("interfaceapp/files/client_secret.json") as cs:
+        client_credentials = json.loads(cs.read())["web"]
+        full_credentials = {
+            "token": credentials["token"],
+            "refresh_token": credentials["refresh_token"],
+            "token_uri": client_credentials["token_uri"],
+            "client_id": client_credentials["client_id"],
+            "client_secret": client_credentials["client_secret"]
+        }
+    return full_credentials

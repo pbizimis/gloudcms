@@ -1,5 +1,5 @@
-from flask import Flask, render_template, session
 import flask
+from flask import Flask, request
 from flask_jwt_extended import JWTManager
 from interfaceapp.blueprints.auth_handler import auth_handler
 from interfaceapp.blueprints.dashboard import dashboard
@@ -35,20 +35,21 @@ def create_app(test_config=None):
     app.config['JWT_ACCESS_COOKIE_NAME'] = 'access_token'
     app.config['JWT_REFRESH_COOKIE_NAME'] = 'refresh_token'
 
-    app.config['JWT_REFRESH_COOKIE_PATH'] = '/refresh'
-    app.config['JWT_REFRESH_CSRF_COOKIE_PATH'] = '/refresh'
+    app.config['JWT_REFRESH_COOKIE_PATH'] = '/refresh/'
+    app.config['JWT_REFRESH_CSRF_COOKIE_PATH'] = '/refresh/'
 
     # Enable csrf double submit protection.
     app.config['JWT_COOKIE_CSRF_PROTECT'] = True
 
     # Set the secret key to sign the JWTs with
     app.config['JWT_SECRET_KEY'] = os.environ.get("JWT_SECRET")
-
+    
     jwt = JWTManager(app)
 
     @jwt.expired_token_loader
     def custom_expired_token_callback(token):
-        return flask.redirect(os.environ["RE_URL"] + "/refresh")
+        current_route = str(request.url_rule).replace("/", "*")
+        return flask.redirect(os.environ["RE_URL"] + "/refresh/" + current_route)
 
     @jwt.unauthorized_loader
     def custom_default_unauthorized_callback(token):

@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: gloudcms-api
+  labels:
+    app: gloudcms
+spec:
+  type: NodePort
+  selector:
+    app: gloudcms
+    tier: api
+  ports:
+  - port: 443
+    targetPort: 8081
+    protocol: TCP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gloudcms-api-deployment
+  labels:
+    app: gloudcms
+    environment: dev
+spec:
+  selector:
+    matchLabels:
+      app: gloudcms
+      tier: api
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: gloudcms
+        tier: api
+    spec:
+      containers:
+      - name: gloudcms-api-container
+        image: gcr.io/gloudcms/gloudcms-api:v1.5.3
+        ports:
+         - containerPort: 8081
+        env:
+        - name: SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: mysecret
+              key: secret_key_api
+        - name: MONGO_IP
+          value: gloudcms-mongo

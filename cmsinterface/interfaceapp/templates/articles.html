@@ -41,10 +41,10 @@
         <div class="card-body">
           <div class="row no-gutters align-items-center">
             <div class="col mr-2">
-              <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Google Docs</div>
+              <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Google Docs Upsert</div>
               <form id="link-form" class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
                 <div class="input-group">
-                  <input type="text" id="link-to-doc" class="form-control bg-white border-0 small" placeholder="Insert Link" aria-label="Search" aria-describedby="basic-addon2">
+                  <input type="text" id="link-to-doc" class="form-control bg-white border-0 small" placeholder="Insert Link" aria-label="Search" aria-describedby="basic-addon2" required>
                   <div class="input-group-append">
                     <button class="btn btn-success" type="submit">
                       <i class="fas fa-plus fa-sm"></i>
@@ -55,12 +55,36 @@
               <div id="error-link" style="display: none;"></div>
               <div id="success-link" style="display: none;"></div>
               <div id="success-url" style="display: none;"></div>
-              <div id="success-apiid" style="display: none;"></div>
             </div>
           </div>
         </div>
       </div>
     </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card border-left-danger shadow h-100 py-2">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Google Docs Delete</div>
+              <form id="url-form" class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                <div class="input-group">
+                  <input type="text" id="url-to-doc" class="form-control bg-white border-0 small" placeholder="Insert Article URL" aria-label="Search" aria-describedby="basic-addon2" required>
+                  <div class="input-group-append">
+                    <button class="btn btn-danger" type="submit">
+                      <i class="fas fa-minus fa-sm"></i>
+                    </button>
+                  </div>
+                </div>
+              </form>
+              <div id="error-aurl" style="display: none;"></div>
+              <div id="success-aurl" style="display: none;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 {% endblock %}
