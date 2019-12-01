@@ -4,7 +4,7 @@ metadata:
   name: gloudcms-ingress
   annotations:
     kubernetes.io/ingress.allow-http: "false"
-    kubernetes.io/ingress.global-static-ip-name: gloudcms-ip
+    kubernetes.io/ingress.global-static-ip-name: gloudcms-static-ip
     networking.gke.io/managed-certificates: philipbizimis-certificate, wwwphilipbizimis-certificate, apiphilipbizimis-certificate
 spec:
   rules:

@@ -15,7 +15,7 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    apiid = "SwwOIFNjiiepJDWANoRU4g"
+    apiid = "-ynCjiKbC4n6DNtcQA98ag"
 
     @app.route("/", methods=["GET"])
     def all_articles():

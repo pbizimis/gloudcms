@@ -23,7 +23,7 @@ CODE123@
 ```
 
 There is an example-blog that makes REST API calls for you (only to the test account).
-It runs on Google App Engine and is @ gloudcms.appspot.com.
+It runs on Google App Engine and is @ gloudcms-123.appspot.com
 
 ## Instructions
 There are three things that you can do on the admin interface.
