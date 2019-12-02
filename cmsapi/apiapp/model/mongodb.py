@@ -9,7 +9,6 @@ else:
     client = MongoClient(DATABASE_URI)
     db = client.gloudcms
 
-
 def query_articles_date(apiid, order):
     articles = list(db.articles.find({"apiid": apiid}, {"_id": 0}).sort("date", int(order)))
     return articles
@@ -77,6 +76,7 @@ def query_account(apiid):
     return account_info
 
 def query_stats(apiid):
+    #get user name to display in response
     name = list(db.user.aggregate([{"$match": {"apiid": apiid}}, {"$project": {"_id": 0, "name": {"$concat": ["$given_name", " ", "$family_name"]}}}]))[0]["name"]
 
     pipeline = [

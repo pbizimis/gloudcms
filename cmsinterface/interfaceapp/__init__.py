@@ -6,7 +6,7 @@ from interfaceapp.controller.dashboard import dashboard
 import os
 import datetime
 
-#create Flask App
+# create Flask App
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
@@ -24,7 +24,7 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    #JWT CONFIG PROCESS-----------------------------------------------
+    # JWT CONFIG PROCESS-----------------------------------------------
     # Configure application to store JWTs in cookies
     app.config['JWT_TOKEN_LOCATION'] = ['cookies']
 
@@ -43,22 +43,26 @@ def create_app(test_config=None):
 
     # Set the secret key to sign the JWTs with
     app.config['JWT_SECRET_KEY'] = os.environ.get("JWT_SECRET")
-    
+
     jwt = JWTManager(app)
 
     @jwt.expired_token_loader
     def custom_expired_token_callback(token):
         current_route = str(request.url_rule).replace("/", "*")
-        return flask.redirect(os.environ["RE_URL"] + "/refresh/" + current_route)
+        return flask.redirect(
+            os.environ["RE_URL"] +
+            "/refresh/" +
+            current_route)
 
     @jwt.unauthorized_loader
     def custom_default_unauthorized_callback(token):
         return flask.redirect(os.environ["RE_URL"] + "/")
 
-    #registering blueprints
+    # registering blueprints
     app.register_blueprint(auth_handler)
     app.register_blueprint(dashboard, url_prefix="/dashboard")
-
+    
     return app
+
 
 app = create_app()

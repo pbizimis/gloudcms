@@ -19,10 +19,12 @@ def create_app(test_config=None):
     except OSError:
         pass
 
+    #route / for GKE health checks
     @app.route("/", methods=["GET"])
     def success():
         return jsonify({"message": "Please use https://api.philipbizimis.com/v1/"})
 
+    #http 404
     @app.errorhandler(404)
     def page_not_found(e):
         return redirect("https://api.philipbizimis.com/v1/")
