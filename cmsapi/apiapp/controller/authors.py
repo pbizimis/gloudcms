@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify
-from apiapp.mongodb import query_author, query_articles_by_author
+from apiapp.model.mongodb import query_author, query_articles_by_author
 
 authors = Blueprint("authors", __name__)
 

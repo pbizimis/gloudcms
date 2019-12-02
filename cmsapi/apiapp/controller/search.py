@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify
-from apiapp.mongodb import query_keyword, query_tags
+from apiapp.model.mongodb import query_keyword, query_tags
 
 search = Blueprint("search", __name__)
 

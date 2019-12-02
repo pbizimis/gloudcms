@@ -1,9 +1,9 @@
 from flask import Flask, redirect, jsonify
-from apiapp.articles import articles
-from apiapp.authors import authors
-from apiapp.search import search
-from apiapp.account import account
-from apiapp.v1_endpoint import v1_endpoint
+from apiapp.controller.articles import articles
+from apiapp.controller.authors import authors
+from apiapp.controller.search import search
+from apiapp.controller.account import account
+from apiapp.controller.v1_endpoint import v1_endpoint
 import os
 
 def create_app(test_config=None):

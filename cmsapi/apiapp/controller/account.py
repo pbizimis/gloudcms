@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify
-from apiapp.mongodb import query_stats, query_account
+from apiapp.model.mongodb import query_stats, query_account
 
 account = Blueprint("account", __name__)
 

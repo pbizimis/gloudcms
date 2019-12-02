@@ -1,9 +1,14 @@
 from pymongo import MongoClient
 import os
 
-DATABASE_URI = 'mongodb://' + os.environ["MONGO_IP"] + ':27017/'
-client = MongoClient(DATABASE_URI)
-db = client.gloudcms
+if os.environ["MONGO_IP"] == "testing":
+    import mongomock
+    db = mongomock.MongoClient().db
+else:
+    DATABASE_URI = 'mongodb://' + os.environ["MONGO_IP"] + ':27017/'
+    client = MongoClient(DATABASE_URI)
+    db = client.gloudcms
+
 
 def query_articles_date(apiid, order):
     articles = list(db.articles.find({"apiid": apiid}, {"_id": 0}).sort("date", int(order)))
