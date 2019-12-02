@@ -1,5 +1,5 @@
 venv/
-cmsinterface/interfaceapp/files/
+cmsinterface/interfaceapp/secrets/
 *.sh
 
 *.pyc
