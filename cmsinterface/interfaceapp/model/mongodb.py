@@ -1,14 +1,17 @@
 from pymongo import MongoClient, TEXT, ASCENDING, DESCENDING
 from datetime import datetime
-#from interfaceapp.redisdb import get_user_info_redis
 import pytz
 import secrets
 import os
 
-DATABASE_URI = 'mongodb://' + os.environ["MONGO_IP"] + ':27017/'
 
-client = MongoClient(DATABASE_URI)
-db = client.gloudcms
+if os.environ["MONGO_IP"] == "testing":
+    import mongomock
+    db = mongomock.MongoClient().db
+else:
+    DATABASE_URI = 'mongodb://' + os.environ["MONGO_IP"] + ':27017/'
+    client = MongoClient(DATABASE_URI)
+    db = client.gloudcms
 
 #INDEXES
 #sparse compound index, so only existence of text index fields determine whether the index is being used

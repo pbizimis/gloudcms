@@ -1,8 +1,9 @@
 import flask
 from flask import Blueprint, render_template, make_response, request, jsonify
-from interfaceapp.mongodb import save_article_mongo, delete_article_mongo
-from interfaceapp.redisdb import get_user_info_redis, get_user_credentials_redis, clear_user_data_redis
-from interfaceapp.googleapi import get_document, get_content
+from interfaceapp.model.mongodb import save_article_mongo, delete_article_mongo
+from interfaceapp.model.redisdb import get_user_info_redis, get_user_credentials_redis, clear_user_data_redis
+from interfaceapp.model.googleapi import get_document
+from interfaceapp.model.article import get_raw_article
 from flask_jwt_extended import get_jwt_identity, jwt_required, unset_jwt_cookies
 import googleapiclient.errors
 import os
@@ -45,14 +46,14 @@ def get_article():
       return jsonify({"error": "You have no permissions for this document!"})
 
    try:
-      content = get_content(document)
+      raw_article = get_raw_article(document)
 
    except IndexError:
       return jsonify({"error": "Wrong template!"})
 
    apiid = get_user_info_redis(gid)["apiid"]
 
-   url, result = save_article_mongo(apiid, content)
+   url, result = save_article_mongo(apiid, raw_article)
    
    if result["updatedExisting"] == True:
       return jsonify({"title": document["title"] + " (Updated)", "url": "URL: " + url})

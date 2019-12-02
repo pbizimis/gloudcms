@@ -1,8 +1,8 @@
 import flask
 from flask import Flask, request
 from flask_jwt_extended import JWTManager
-from interfaceapp.blueprints.auth_handler import auth_handler
-from interfaceapp.blueprints.dashboard import dashboard
+from interfaceapp.controller.auth_handler import auth_handler
+from interfaceapp.controller.dashboard import dashboard
 import os
 import datetime
 

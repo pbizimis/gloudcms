@@ -1,6 +1,6 @@
 venv/
 cmsinterface/interfaceapp/files/
-flask_start.sh
+*.sh
 
 *.pyc
 __pycache__/

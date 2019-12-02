@@ -1,8 +1,8 @@
 import flask
 from flask import Blueprint, render_template, make_response, request
-from interfaceapp.mongodb import save_user_mongo, get_user_data_mongo
-from interfaceapp.googleapi import get_user_info
-from interfaceapp.redisdb import set_user_data_redis
+from interfaceapp.model.mongodb import save_user_mongo, get_user_data_mongo
+from interfaceapp.model.googleapi import get_user_info
+from interfaceapp.model.redisdb import set_user_info_redis
 import os
 
 import google.oauth2.credentials
@@ -81,7 +81,7 @@ def oauth2callback():
    apiid = save_user_mongo(user_info, credentials)
 
    #save user info and credentials to redis
-   set_user_data_redis(gid, user_info, apiid)
+   set_user_info_redis(gid, user_info, apiid)
 
    #set JWT Cookie to know that the user of the google id is logged in
    access_token = create_access_token(identity=gid)

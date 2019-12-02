@@ -1,28 +1,34 @@
 import redis
 import json
 import os
-from interfaceapp.mongodb import get_user_data_mongo, get_credentials_mongo
+from interfaceapp.model.mongodb import get_user_data_mongo, get_credentials_mongo
 
-#redis master for write-processes
-rm = redis.Redis(host=os.environ["REDIS_MASTER"], port=6379, db=0)
-#redis slave for read-processes
-rs = redis.Redis(host=os.environ["REDIS_SLAVE"], port=6379, db=0)
+if os.environ["REDIS_MASTER"] == "testing" and os.environ["REDIS_SLAVE"] == "testing":
+    import fakeredis
+    server = fakeredis.FakeServer()
+    rm = fakeredis.FakeRedis(server=server)
+    rs = fakeredis.FakeRedis(server=server)
+else:
+    #redis master for write-processes
+    rm = redis.Redis(host=os.environ["REDIS_MASTER"], port=6379, db=0)
+    #redis slave for read-processes
+    rs = redis.Redis(host=os.environ["REDIS_SLAVE"], port=6379, db=0)
 
 def clear_user_data_redis(gid):
     return rm.delete("user:" + gid)
         
-def test_and_set_user_data_redis(gid):
+def set_if_not_user_info_redis(gid):
     if rs.hget("user:" + gid, "name") == None:
-        return set_user_data_redis(gid)
+        return set_user_info_redis(gid)
     return True
         
-def test_and_set_credentials_redis(gid):
+def set_if_not_credentials_redis(gid):
     if rs.hget("user:" + gid, "credentials") == None:
         return set_credentials_redis(gid)
     return True
 
 #set user data in redis
-def set_user_data_redis(gid, user_info = None, apiid = None):
+def set_user_info_redis(gid, user_info = None, apiid = None):
 
     #pipeline for saving data
     pipe = rm.pipeline()
@@ -52,7 +58,7 @@ def set_credentials_redis(gid):
     
 #get user info
 def get_user_info_redis(gid):
-    test_and_set_user_data_redis(gid)
+    set_if_not_user_info_redis(gid)
 
     pipe = rs.pipeline()
 
@@ -66,7 +72,7 @@ def get_user_info_redis(gid):
 
 #get user credentials
 def get_user_credentials_redis(gid):
-    test_and_set_credentials_redis(gid)
+    set_if_not_credentials_redis(gid)
     credentials = json.loads(rs.hget("user:" + gid, "credentials"))
     with open("interfaceapp/files/client_secret.json") as cs:
         client_credentials = json.loads(cs.read())["web"]
