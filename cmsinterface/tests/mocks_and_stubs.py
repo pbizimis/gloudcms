@@ -240,3 +240,25 @@ raw_article_right = {
         "article",
         "sports"],
     "content": content_right}
+
+content_string_right = """Author
+Philip Bizimis
+
+Tags
+first,post,article,sports
+
+Content
+This is the first paragraph of this article but I changed it. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+
+Picture
+https://natureconservancy-h.assetsadobe.com/is/image/content/dam/tnc/nature/en/photos/Brown_County_Hills_Leonetti.jpg?crop=33,0,1192,656&wid=4000&hei=2200&scl=0.29818181818181816
+
+This is the second paragraph of this article. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.\n"""
+
+content_array_raw_right = ['Author', 'Philip Bizimis', '', 'Tags', 'first,post,article,sports', '', 'Content', 'This is the first paragraph of this article but I changed it. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.', '', 'Picture', 'https://natureconservancy-h.assetsadobe.com/is/image/content/dam/tnc/nature/en/photos/Brown_County_Hills_Leonetti.jpg?crop=33,0,1192,656&wid=4000&hei=2200&scl=0.29818181818181816', '', 'This is the second paragraph of this article. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.', ""]
+
+content_array_right = list(filter(None, content_array_raw_right))
+
+content_array_wrong = content_array_right.copy().pop(0)
+
+content_right = [{'pics': [], 'para': 'This is the first paragraph of this article but I changed it. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.'}, {'pics': [], 'para': 'Picture'}, {'pics': [], 'para': 'https://natureconservancy-h.assetsadobe.com/is/image/content/dam/tnc/nature/en/photos/Brown_County_Hills_Leonetti.jpg?crop=33,0,1192,656&wid=4000&hei=2200&scl=0.29818181818181816'}, {'pics': [], 'para': 'This is the second paragraph of this article. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.'}]
