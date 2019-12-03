@@ -1,32 +1,41 @@
+class Raw_Article():
+    def __init__(self, author, title, url, tags, content):
+        self.author = author
+        self.title = title
+        self.url = url
+        self.tags = tags
+        self.content = content
+
+    def get_object(self):
+        raw_article = {
+            "author": self.author,
+            "title": self.title,
+            "url": self.url,
+            "tags": self.tags,
+            "content": self.content
+        }
+        return raw_article
+
+
 def get_raw_article(document):
     content_string = get_content_string(document)
 
-    # split result_string at \n, delete empty strings
-    splitted_string_raw = content_string.split("\n")
-    splitted_string = list(filter(None, splitted_string_raw))
+    content_array_raw = split_string(content_string)
 
-    # check template
-    if "author" not in splitted_string[0].lower() or "tags" not in splitted_string[2].lower(
-    ) or "content" not in splitted_string[4].lower():
-        raise IndexError
+    content_array = remove_spaces(content_array_raw)
 
-    # define raw article structure
-    author = splitted_string[1]
+    check_template(content_array)
+
+    author = content_array[1]
     title = document["title"]
     url = document["title"].replace(" ", "_").lower()
-    tags = splitted_string[3].split(",")
-    content = get_content(splitted_string)
-    raw_article = {
-        "author": author,
-        "title": title,
-        "url": url,
-        "tags": tags,
-        "content": content}
+    tags = content_array[3].split(",")
+    content = get_content(content_array)
 
-    return raw_article
+    raw_article = Raw_Article(author, title, url, tags, content)
 
+    return raw_article.get_object()
 
-# return a content string that filtered the content from the raw google docs api json response
 def get_content_string(document):
     content_string = ""
     content = document.get("body").get("content")
@@ -42,16 +51,26 @@ def get_content_string(document):
                     
     return content_string
 
+def split_string(content_string):
+    return content_string.split("\n")
 
-# return content dict that is ready to be inserted to the raw article dict
-def get_content(splitted_string):
+def remove_spaces(content_array_raw):
+    return list(filter(None, content_array_raw))
+
+def check_template(content_array):
+    if "author" not in content_array[0].lower() or "tags" not in content_array[2].lower() or "content" not in content_array[4].lower():
+        raise IndexError
+    else:
+        return True
+
+def get_content(content_array):
     content = []
     element_dict = {}
     element_dict["pics"] = []
     found_content = 0
     found_picture = 0
-    # loops through array with content
-    for elem in splitted_string:
+
+    for elem in content_array:
         if found_content == 1:
             if "picture:" in elem.lower():
                 found_picture = 1
