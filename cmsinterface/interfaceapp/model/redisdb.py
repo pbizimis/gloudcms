@@ -1,7 +1,7 @@
 import redis
 import json
 import os
-from interfaceapp.model.mongodb import get_user_data_mongo, get_credentials_mongo
+from interfaceapp.model.mongodb import get_user_info_mongo, get_user_credentials_mongo
 
 if os.environ["REDIS_MASTER"] == "testing" and os.environ["REDIS_SLAVE"] == "testing":
     import fakeredis
@@ -27,9 +27,9 @@ def set_if_not_user_info_redis(gid):
 
 
 # set user credentials if not already in redis (if one redis instance fails)
-def set_if_not_credentials_redis(gid):
+def set_if_not_user_credentials_redis(gid):
     if rs.hget("user:" + gid, "credentials") is None:
-        return set_credentials_redis(gid)
+        return set_user_credentials_redis(gid)
     return True
 
 
@@ -39,7 +39,7 @@ def set_user_info_redis(gid, user_info=None, apiid=None):
     pipe = rm.pipeline()
 
     if user_info is None and apiid is None:
-        user_info = get_user_data_mongo(gid)
+        user_info = get_user_info_mongo(gid)
         apiid = user_info["apiid"]
 
     pipe.hset(
@@ -56,11 +56,11 @@ def set_user_info_redis(gid, user_info=None, apiid=None):
     return resp
 
 
-def set_credentials_redis(gid):
+def set_user_credentials_redis(gid):
     # pipeline for saving credentials
     pipe = rm.pipeline()
 
-    credentials = get_credentials_mongo(gid)
+    credentials = get_user_credentials_mongo(gid)
     # json dumps since hmset raises DataError due to array inside the dict
     pipe.hset("user:" + gid, "credentials", json.dumps(credentials))
 
@@ -88,7 +88,7 @@ def get_user_info_redis(gid):
 
 # get user credentials
 def get_user_credentials_redis(gid):
-    set_if_not_credentials_redis(gid)
+    set_if_not_user_credentials_redis(gid)
     credentials = json.loads(rs.hget("user:" + gid, "credentials"))
     with open("interfaceapp/secrets/client_secret.json") as cs:
         client_credentials = json.loads(cs.read())["web"]

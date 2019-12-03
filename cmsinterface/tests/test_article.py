@@ -26,7 +26,6 @@ def test_check_template():
 
 def test_get_content():
     content = get_content(content_array_right)
-    print(content)
     assert content == content_right
 
 

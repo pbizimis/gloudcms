@@ -49,14 +49,14 @@ def save_user_mongo(user_info, credentials):
     return apiid
 
 
-def get_user_data_mongo(gid):
+def get_user_info_mongo(gid):
     user_info = db.user.find_one(
         {"gid": gid}, {"given_name": 1, "family_name": 1, "apiid": 1, "picture": 1})
 
     return user_info
 
 
-def get_credentials_mongo(gid):
+def get_user_credentials_mongo(gid):
     credentials = db.user.find_one({"gid": gid}, {"credentials": 1})
     try:
         return credentials["credentials"]

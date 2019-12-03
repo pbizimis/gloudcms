@@ -1,6 +1,6 @@
 import flask
 from flask import Blueprint, render_template, make_response, request
-from interfaceapp.model.mongodb import save_user_mongo, get_user_data_mongo
+from interfaceapp.model.mongodb import save_user_mongo
 from interfaceapp.model.googleapi import get_user_info
 from interfaceapp.model.redisdb import set_user_info_redis
 import os

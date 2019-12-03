@@ -13,15 +13,15 @@ def test_save_user_mongo():
     assert apiid == apiid_copy
 
 
-def test_get_user_data_mongo():
-    user_info = get_user_data_mongo("1234")
+def test_get_user_info_mongo():
+    user_info = get_user_info_mongo("1234")
     assert user_info["given_name"] == "givenName"
 
 
-def test_get_credentials_mongo():
-    credentials = get_credentials_mongo("1234")
+def test_get_user_credentials_mongo():
+    credentials = get_user_credentials_mongo("1234")
     assert credentials["token"] == 4321
-    wrong_credentials = get_credentials_mongo("wrong")
+    wrong_credentials = get_user_credentials_mongo("wrong")
     assert wrong_credentials is None
 
 
