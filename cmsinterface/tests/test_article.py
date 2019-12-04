@@ -4,7 +4,7 @@ from interfaceapp.model.article import *
 
 
 def test_get_content_string():
-    content_string = get_content_string(document)
+    content_string = get_content_string(document_right)
     assert content_string == content_string_right
 
 
@@ -30,5 +30,5 @@ def test_get_content():
 
 
 def test_get_raw_article():
-    raw_article = get_raw_article(document)
+    raw_article = get_raw_article(document_right)
     assert raw_article == raw_article_right

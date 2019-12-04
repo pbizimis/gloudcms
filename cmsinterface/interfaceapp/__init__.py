@@ -30,7 +30,10 @@ def create_app(test_config=None):
 
     # Only allow JWT cookies to be sent over https. In production, this
     # should likely be True
-    app.config['JWT_COOKIE_SECURE'] = False
+    if os.environ.get("JWT_COOKIE_SECURE") == "true":
+        app.config['JWT_COOKIE_SECURE'] = True
+    else:
+        app.config['JWT_COOKIE_SECURE'] = False
 
     app.config['JWT_ACCESS_COOKIE_NAME'] = 'access_token'
     app.config['JWT_REFRESH_COOKIE_NAME'] = 'refresh_token'

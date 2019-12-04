@@ -30,9 +30,8 @@ def app():
     @app.route('/access_token', methods=['GET'])
     def access_token():
         resp = jsonify(login=True)
-        access_token = create_access_token(identity=os.environ.get("GID_TEST"))
-        refresh_token = create_refresh_token(
-            identity=os.environ.get("GID_TEST"))
+        access_token = create_access_token(identity="1234")
+        refresh_token = create_refresh_token(identity="1234")
         set_access_cookies(resp, access_token)
         set_refresh_cookies(resp, refresh_token)
         return resp
