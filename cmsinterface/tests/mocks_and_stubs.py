@@ -285,3 +285,11 @@ content_right = [{'pics': [],
                   'para': 'https://natureconservancy-h.assetsadobe.com/is/image/content/dam/tnc/nature/en/photos/Brown_County_Hills_Leonetti.jpg?crop=33,0,1192,656&wid=4000&hei=2200&scl=0.29818181818181816'},
                  {'pics': [],
                   'para': 'This is the second paragraph of this article. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.'}]
+
+class Flow_Mock():
+        redirect_uri = ""
+        credentials = {"TEST": "test"}
+        def fetch_token(self, authorization_response):
+            return True
+        def authorization_url(*args, **kwargs):
+            return "url", "state"

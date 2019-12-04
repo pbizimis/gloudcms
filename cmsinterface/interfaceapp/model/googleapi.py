@@ -6,7 +6,7 @@ API_SERVICE_NAME = "docs"
 API_VERSION = "v1"
 
 
-# validate credentials dict from mongo for google api call
+# validate credentials dict for google api call
 def get_right_credentials(credentials):
     if isinstance(credentials, dict):
         credentials = google.oauth2.credentials.Credentials(**credentials)
@@ -14,12 +14,12 @@ def get_right_credentials(credentials):
     return credentials
 
 
-# get google docs api document
+# get google docs document
 def get_document(credentials, document_link):
     credentials = get_right_credentials(credentials)
+    documentId = re.findall("/document/d/([a-zA-Z0-9-_]+)", document_link)[0]
     docs = googleapiclient.discovery.build(
         API_SERVICE_NAME, API_VERSION, credentials=credentials)
-    documentId = re.findall("/document/d/([a-zA-Z0-9-_]+)", document_link)[0]
     document = docs.documents().get(documentId=documentId).execute()
 
     return document

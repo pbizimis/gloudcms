@@ -1,6 +1,6 @@
 venv/
 cmsinterface/interfaceapp/secrets/
-*.sh
+cmsinterface/scripts/
 
 *.pyc
 __pycache__/

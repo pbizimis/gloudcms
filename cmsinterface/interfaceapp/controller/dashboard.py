@@ -20,11 +20,7 @@ dashboard = Blueprint(
 def dashboard_main():
     gid = get_jwt_identity()
 
-    # render dashboard with user info, redirect to logout if there is an error with redis
-    try:
-        user_info = get_user_info_redis(gid)
-    except TypeError:
-        return flask.redirect(os.environ["RE_URL"] + "/dashboard/logout")
+    user_info = get_user_info_redis(gid)
 
     return render_template("dashboard.html", user_info=user_info)
 

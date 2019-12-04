@@ -79,3 +79,5 @@ spec:
           value: "0"
         - name: OAUTHLIB_RELAX_TOKEN_SCOPE
           value: "0"
+        - name: JWT_COOKIE_SECURE
+          value: true
