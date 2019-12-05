@@ -1,11 +1,11 @@
 import pytest
 import json
 import google.oauth2.credentials
-from tests.mocks_and_stubs import *
+from tests.stubs import *
 from interfaceapp.model.googleapi import *
 import googleapiclient.errors
 
-def test_credentials():
+def get_test_credentials():
     with open("interfaceapp/secrets/test_secret.json") as cs:
         test_credentials = json.loads(cs.read())["credentials"]
 
@@ -20,7 +20,7 @@ def test_credentials():
         }
     return full_credentials
 
-test_credentials = test_credentials()
+test_credentials = get_test_credentials()
 
 test_document_one = "https://docs.google.com/document/d/1iwr0svUf4eFpBDwI-ZslJrMYz3u0290PZHbN-GxZtsg/edit"
 test_document_one_no_perm = "https://docs.google.com/document/d/1iw-ZslJrMYz3u0290PZHbN-GxZtsg/edit"

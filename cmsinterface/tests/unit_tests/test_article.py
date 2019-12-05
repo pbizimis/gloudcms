@@ -1,5 +1,5 @@
 import pytest
-from tests.mocks_and_stubs import *
+from tests.stubs import *
 from interfaceapp.model.article import *
 
 

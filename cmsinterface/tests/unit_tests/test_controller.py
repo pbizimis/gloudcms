@@ -8,7 +8,7 @@ from flask_jwt_extended import (
 )
 import os
 import googleapiclient.errors
-from tests.mocks_and_stubs import Flow_Mock
+from tests.stubs import Flow_Mock
 
 
 def _get_cookie_from_response(response, cookie_name):
@@ -104,6 +104,7 @@ def test_login_flow(client, mocker):
     assert resp.status_code == 302
 
 def test_oauth2callback_flow(client, mocker):
+    # arrange
     login(client)
     class_mock = mocker.patch("google_auth_oauthlib.flow.Flow.from_client_secrets_file")
     class_mock.return_value = Flow_Mock()
@@ -113,10 +114,12 @@ def test_oauth2callback_flow(client, mocker):
     mocked_save_user_mongo = mocker.patch("interfaceapp.controller.auth_handler.save_user_mongo")
     mocked_save_user_mongo.return_value = "12345"
     mocked_save_user_redis = mocker.patch("interfaceapp.controller.auth_handler.set_user_info_redis")
+    # act
     resp = client.get("/oauth2callback")
+    cookies = resp.headers.getlist('Set-Cookie')
+    # assert
     mocked_save_user_mongo.assert_called_once_with({"id": "1234"}, {"TEST": "test"})
     mocked_save_user_redis.assert_called_once_with("1234", {"id": "1234"}, "12345")
-    cookies = resp.headers.getlist('Set-Cookie')
     assert len(cookies) == 4
     assert resp.status_code == 302
 
@@ -141,14 +144,19 @@ def test_docs_find(client, mocker):
     # arrange
     mocker.patch("interfaceapp.model.googleapi.get_right_credentials")
     mocker.patch("interfaceapp.controller.dashboard.get_user_credentials_redis")
-    # test with wrong link
+    # act (test with wrong link)
     resp = client.post("/dashboard/docs/find", data={'link': "X_UzVz0RpA59ptbpA3LagEctNWpYGlF7nipgj54/edit"}, headers=csrf_headers)
+    # assert
     assert resp.status_code == 200
     assert resp.json == {'error': 'Wrong Document Link!'}
+
     # test with no permissions
+    # arrange
     mocked_func = mocker.patch("interfaceapp.controller.dashboard.get_document")
     mocked_func.side_effect = googleapiclient.errors.HttpError(resp, b"mock")
+    # act
     resp = client.post("/dashboard/docs/find", data={'link': "X_UzVz0RpA59ptbpA3LagEctNWpYGlF7nipgj54/edit"}, headers=csrf_headers)
+    # assert
     assert resp.status_code == 200
     assert resp.json == {"error": "You have no permissions for this document!"}
 
@@ -156,11 +164,14 @@ def test_docs_find_document_success(client, mocker):
     csrf_headers = get_csrf_headers(client)
 
     # test wrong template
+    # arrange
     mocker.patch("interfaceapp.controller.dashboard.get_document")
     mocker.patch("interfaceapp.controller.dashboard.get_user_credentials_redis")
     mocked_func = mocker.patch("interfaceapp.controller.dashboard.get_raw_article")
     mocked_func.side_effect = IndexError
+    # act
     resp = client.post("/dashboard/docs/find", data={'link': "X_UzVz0RpA59ptbpA3LagEctNWpYGlF7nipgj54/edit"}, headers=csrf_headers)
+    # assert
     assert resp.status_code == 200
     assert resp.json == {"error": "Wrong template!"}
 
@@ -168,6 +179,7 @@ def test_docs_find_document_success_raw_article_success(client, mocker):
     csrf_headers = get_csrf_headers(client)
     
     # test update article
+    # arrange
     mocked_document = mocker.patch("interfaceapp.controller.dashboard.get_document")
     mocked_document.return_value = {"title": "TestOne"}
     mocker.patch("interfaceapp.controller.dashboard.get_user_credentials_redis")
@@ -175,9 +187,12 @@ def test_docs_find_document_success_raw_article_success(client, mocker):
     mocker.patch("interfaceapp.controller.dashboard.get_user_info_redis")
     mocked_func = mocker.patch("interfaceapp.controller.dashboard.save_article_mongo")
     mocked_func.return_value = "url", {"updatedExisting": True}
+    # act
     resp = client.post("/dashboard/docs/find", data={'link': "X_UzVz0RpA59ptbpA3LagEctNWpYGlF7nipgj54/edit"}, headers=csrf_headers)
+    # assert
     assert resp.status_code == 200
     assert resp.json == {"title":"TestOne (Updated)", "url": "URL: url"}
+
     # test create article
     mocked_func.return_value = "url", {"updatedExisting": False}
     resp = client.post("/dashboard/docs/find", data={'link': "X_UzVz0RpA59ptbpA3LagEctNWpYGlF7nipgj54/edit"}, headers=csrf_headers)
@@ -189,12 +204,16 @@ def test_delete_article(client, mocker):
     csrf_headers = get_csrf_headers(client)
     
     # test delete article
+    # arrange
     mocker.patch("interfaceapp.controller.dashboard.get_user_info_redis")
     mocked_func = mocker.patch("interfaceapp.controller.dashboard.delete_article_mongo")
     mocked_func.return_value = 1
+    # act
     resp = client.post("/dashboard/docs/delete", data={'url': "test_url"}, headers=csrf_headers)
+    # assert
     assert resp.status_code == 200
     assert resp.json == {"title": "Deleted Article with URL: test_url"}
+
     # test delete not existing article
     mocked_func.return_value = 0
     resp = client.post("/dashboard/docs/delete", data={'url': "test_url"}, headers=csrf_headers)

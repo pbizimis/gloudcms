@@ -1,6 +1,6 @@
 import pytest
 from interfaceapp.model.redisdb import *
-from tests.mocks_and_stubs import user_info
+from tests.stubs import user_info
 
 
 def test_set_user_info_redis():
