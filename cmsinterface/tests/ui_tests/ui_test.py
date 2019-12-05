@@ -9,8 +9,6 @@ import time
 service = Service('/home/philip/chromedriver.exe')
 service.start()
 driver = webdriver.Remote(service.service_url)
-
-driver.get('https://www.google.nl/')
 delay = 10
 
 driver.get("http://127.0.0.1:8080")
@@ -55,14 +53,14 @@ assert error.text == "Wrong Document Link!"
 upsert.clear()
 upsert.send_keys("https://docs.google.com/document/d/1iwr0svUf4eFpBDwI-ZslJrMYz3u0290PZHbN-GxZtsg/edit")
 upsert.send_keys(Keys.RETURN)
-time.sleep(2)
+time.sleep(4)
 sec_error = WebDriverWait(driver, delay).until(EC.element_to_be_clickable((By.ID  , 'error-link')))
 assert sec_error.text == "You have no permissions for this document!"
 
 upsert.clear()
 upsert.send_keys("https://docs.google.com/document/d/1kQtFp38VkC0kapzUkZtRhcxjmPKjVG3VK8gXThJ4S0c/edit")
 upsert.send_keys(Keys.RETURN)
-time.sleep(2)
+time.sleep(4)
 error = WebDriverWait(driver, delay).until(EC.element_to_be_clickable((By.ID  , 'error-link')))
 assert error.text == "Wrong template!"
 
@@ -76,6 +74,7 @@ assert success.text == "Deleted Article with URL: editor_template"
 delete.clear()
 delete.send_keys("editor_template")
 delete.send_keys(Keys.RETURN)
-time.sleep(2)
+time.sleep(4)
 error = WebDriverWait(driver, delay).until(EC.element_to_be_clickable((By.ID  , 'success-aurl')))
 assert error.text == "Article with URL: editor_template not found!"
+driver.get("http://127.0.0.1:8080/dashboard/logout")

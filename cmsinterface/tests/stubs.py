@@ -10,11 +10,9 @@ user_info = {
 
 user_info_google_right = {'id': '117248067145484343890', 'email': 'dasmlgschaf@gmail.com', 'verified_email': True, 'name': 'Dasmlg Schaf', 'given_name': 'Dasmlg', 'family_name': 'Schaf', 'picture': 'https://lh6.googleusercontent.com/-GclbpHqiZKY/AAAAAAAAAAI/AAAAAAAAAAA/ACHi3rd9pF5rs6EOFe0GMmX_w6mmaxeW0g/photo.jpg', 'locale': 'de'}
 
-
 class credentials():
     token = 4321
     refresh_token = 54321
-
 
 raw_article = {
     "author": "Test",
