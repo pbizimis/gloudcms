@@ -34,7 +34,7 @@ def test_get_right_credentials():
 def test_get_document():
     # test google docs api with right link
     document = get_document(test_credentials, test_document_one)
-    assert document["title"] == "Test Document One"
+    assert document["title"] == document_right["title"]
     assert document == document_right
 
     # test google docs api with no permissions to the document
