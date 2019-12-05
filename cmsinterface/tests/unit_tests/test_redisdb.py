@@ -16,15 +16,18 @@ def test_get_user_info_redis():
         'apiid': 'apiid'}
 
 
-def test_set_if_not_user_info_redis():
+def test_set_if_not_user_info_redis(mocker):
     resp = set_if_not_user_info_redis("1234")
     assert resp == True
     # setting if not already there
-    with pytest.raises(TypeError):
-        set_if_not_user_info_redis("12345")
+    mocked_func = mocker.patch("interfaceapp.model.redisdb.set_user_info_redis")
+    set_if_not_user_info_redis("12345")
+    mocked_func.assert_called_with("12345")
 
 
-def test_set_user_credentials_redis():
+def test_set_user_credentials_redis(mocker):
+    mocked_func = mocker.patch("interfaceapp.model.redisdb.get_user_credentials_mongo")
+    mocked_func.return_value = {"token": 4321, "refresh_token": 54321}
     resp = set_user_credentials_redis("1234")
     assert resp == [1]
 
@@ -37,13 +40,13 @@ def test_get_user_credentials_redis():
         assert value != None
 
 
-def test_set_if_not_user_credentials_redis():
+def test_set_if_not_user_credentials_redis(mocker):
     resp = set_if_not_user_credentials_redis("1234")
     assert resp == True
     # setting if not already there
-    resp = set_if_not_user_credentials_redis("12345")
-    assert resp == [1]
-
+    mocked_func = mocker.patch("interfaceapp.model.redisdb.set_user_credentials_redis")
+    set_if_not_user_credentials_redis("12345")
+    mocked_func.assert_called_with("12345")
 
 def test_clear_user_data_redis():
     resp = clear_user_data_redis("1234")

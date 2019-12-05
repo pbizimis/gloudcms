@@ -3,6 +3,20 @@ from tests.mocks_and_stubs import *
 from interfaceapp.model.article import *
 
 
+def test_class():
+    raw_test_article = Raw_Article("tauthor", "ttitle", "turl", "ttags", "tcontent")
+    assert raw_test_article.author == "tauthor"
+    assert raw_test_article.title == "ttitle"
+    assert raw_test_article.url == "turl"
+    assert raw_test_article.tags == "ttags"
+    assert raw_test_article.content == "tcontent"
+    assert raw_test_article.get_object() == {"author": "tauthor",
+                                            "title": "ttitle",
+                                            "url": "turl",
+                                            "tags": "ttags",
+                                            "content": "tcontent"}
+
+
 def test_get_content_string():
     content_string = get_content_string(document_right)
     assert content_string == content_string_right
